@@ -3,8 +3,8 @@ module com.example.advancedfinalproject {
     requires javafx.fxml;
 
 
-    opens com.example.advancedfinalproject to javafx.fxml;
-    exports com.example.advancedfinalproject;
-    exports game.prototype.AdvancedFinalProject;
-    exports game.PlantsVsZombies.AdvancedFinalProject;
+    opens com.example to javafx.fxml;
+    exports com.example;
+    exports advancedfinalproject.game.prototype;
+    exports advancedfinalproject.game.PlantsVsZombies;
 }

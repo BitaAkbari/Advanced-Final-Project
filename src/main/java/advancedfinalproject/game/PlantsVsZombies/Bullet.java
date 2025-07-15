@@ -1,4 +1,4 @@
-package game.PlantsVsZombies.AdvancedFinalProject;
+package advancedfinalproject.game.PlantsVsZombies;
 
 public class Bullet {
     private double speed;

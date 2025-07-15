@@ -1,4 +1,4 @@
-package game.prototype.AdvancedFinalProject;
+package advancedfinalproject.game.prototype;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
