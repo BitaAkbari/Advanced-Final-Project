@@ -7,4 +7,5 @@ module com.example.advancedfinalproject {
     exports com.example;
     exports advancedfinalproject.game.prototype;
     exports advancedfinalproject.game.PlantsVsZombies;
+    opens advancedfinalproject.game.prototype to javafx.fxml;
 }
