@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -12,61 +13,96 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Zombie extends Application {
-    private ZombieController zombie;
-    private boolean isMoving = true;
+    private List<Image> zombieFrames;
+    private ImageView zombieView;
+    private int currentFrame = 0;
+    private double zombieX = 1200; // شروع از سمت راست
+    private final double ZOMBIE_Y = 200;
+    private double speed = 1;
+    protected boolean isMoving = true;
+    private AnimationTimer timer;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) {
         Pane root = new Pane();
-        Scene scene = new Scene(root, 800, 400);
 
-        // ایجاد زامبی
-        List<Image> frames = loadZombieFrames();
-        zombie = new ZombieController(frames);
-        root.getChildren().add(zombie.getImageView());
+        loadZombieFrames();
+        setupZombie();
+        root.getChildren().add(zombieView);
 
-        // دکمه توقف/شروع
-        Button toggleButton = new Button("توقف زامبی");
-        toggleButton.setLayoutX(350);
-        toggleButton.setLayoutY(350);
-        toggleButton.setOnAction(e -> {
-            isMoving = !isMoving;
-            toggleButton.setText(isMoving ? "توقف زامبی" : "شروع حرکت");
+        ZombieController controller = new ZombieController(this);
+
+        Button btn = new Button("توقف زامبی");
+        btn.setLayoutX(350);
+        btn.setLayoutY(350);
+        btn.setOnAction(e -> {
+            controller.toggleMovement();
+            btn.setText(isMoving ? "توقف زامبی" : "شروع حرکت");
         });
-        root.getChildren().add(toggleButton);
+        root.getChildren().add(btn);
 
-        // انیمیشن زامبی
-        AnimationTimer timer = new AnimationTimer() {
+        startAnimation();
+
+        stage.setScene(new Scene(root, 800, 400));
+        stage.setTitle("زامبی با حرکت راست به چپ");
+        stage.show();
+    }
+
+    private void startAnimation() {
+        timer = new AnimationTimer() {
             private long lastUpdate = 0;
+
             @Override
             public void handle(long now) {
-                if (now - lastUpdate >= 100_000_000 && isMoving) { // هر 100 میلی‌ثانیه
-                    zombie.update();
+                if (now - lastUpdate >= 150_000_000 && isMoving) {
+                    updateZombie();
                     lastUpdate = now;
                 }
             }
         };
         timer.start();
-
-        primaryStage.setTitle("زامبی متحرک");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
-    // بارگذاری فریم‌های زامبی
-    private List<Image> loadZombieFrames() {
-        List<Image> frames = new ArrayList<>();
+    private void loadZombieFrames() {
+        zombieFrames = new ArrayList<>();
         try {
-            for (int i = 1; i <=50; i++) { //  50 فریم
-                frames.add(new Image(getClass().getResourceAsStream(
-                        "/resources/zombie/frame" + i + ".png"
-                )));
+            for (int i = 1; i <= 7; i++) {
+                String path = "/simple zombie/" + i + ".png";
+                Image frame = new Image(getClass().getResourceAsStream(path));
+                zombieFrames.add(frame);
             }
         } catch (Exception e) {
-            System.err.println("خطا در بارگذاری تصاویر زامبی!");
+            System.err.println("خطا در بارگذاری فریم‌های زامبی!");
             e.printStackTrace();
         }
-        return frames;
+    }
+
+    private void setupZombie() {
+        zombieView = new ImageView(zombieFrames.get(0));
+        zombieView.setScaleX(0.2);  // 20% اندازه اصلی در عرض
+        zombieView.setScaleY(0.2);  // 20% اندازه اصلی در ارتفاع
+        zombieView.setLayoutX(zombieX);
+        zombieView.setLayoutY(ZOMBIE_Y);
+    }
+
+    private void updateZombie() {
+        // به‌روزرسانی فریم انیمیشن
+        currentFrame = (currentFrame + 1) % zombieFrames.size();
+        zombieView.setImage(zombieFrames.get(currentFrame));
+
+        // حرکت به چپ (کاهش مقدار X)
+        zombieX -= speed;
+        if (zombieX < -zombieView.getImage().getWidth()) {
+            zombieX = 1200; // بازگشت به سمت راست
+        }
+        zombieView.setLayoutX(zombieX);
+    }
+
+    @Override
+    public void stop() {
+        if (timer != null) {
+            timer.stop();
+        }
     }
 
     public static void main(String[] args) {
