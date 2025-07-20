@@ -18,7 +18,9 @@ public class GameScreen extends Application {
         Pane pane = new Pane();
 
         gameStage.setTitle("game screen");
-        gameStage.setMaximized(true);
+        //gameStage.setMaximized(true);
+        gameStage.setResizable(false);
+
 
         Image screen = new Image(getClass().getResource("/Screen Images/day-background.png").toExternalForm());
         ImageView screenImage = new ImageView(screen);
@@ -26,7 +28,7 @@ public class GameScreen extends Application {
         screenImage.fitWidthProperty().bind(pane.widthProperty());
         screenImage.fitHeightProperty().bind(pane.heightProperty());
 
-        Canvas canvas = new Canvas(1500, 1000);
+        Canvas canvas = new Canvas(3000, 2000);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         gc.setStroke(Color.RED);
@@ -61,7 +63,7 @@ public class GameScreen extends Application {
         pane.getChildren().add(screenImage);
         pane.getChildren().add(canvas);
 
-        Scene screenScene = new Scene(pane);
+        Scene screenScene = new Scene(pane, 1500, 750);
         gameStage.setScene(screenScene);
         gameStage.show();
 
