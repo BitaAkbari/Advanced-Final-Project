@@ -12,6 +12,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class GameScreen extends Application {
+    private final int width = 1500;
+    private final int height = 750;
+
     @Override
     public void start(Stage gameStage) {
 
@@ -28,28 +31,28 @@ public class GameScreen extends Application {
         screenImage.fitWidthProperty().bind(pane.widthProperty());
         screenImage.fitHeightProperty().bind(pane.heightProperty());
 
-        Canvas canvas = new Canvas(3000, 2000);
+        Canvas canvas = new Canvas(width, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         gc.setStroke(Color.RED);
         gc.setLineWidth(2);
-        gc.strokeLine(380, 106, 380, 760);
-        gc.strokeLine(1490, 106, 1490, 760);
-        gc.strokeLine(380, 106, 1490, 106);
-        gc.strokeLine(380, 760, 1490, 760);
+        gc.strokeLine(370, 106, 370, 715);
+        //gc.strokeLine(1435, 106, 1435, 715);
+        gc.strokeLine(370, 106, 1435, 106);
+        //gc.strokeLine(370, 715, 1435, 715);
 
-        int cellSize = 120;
-        int startX = 380, endX = 380;
+        int cellSize = 118;
+        int startX = 370, endX = 370;
         int startY = 106;
-        int endY = 760;
-        for (int i = 1; i < 9; i++)
+        int endY = 715;
+        for (int i = 1; i <= 9; i++)
             gc.strokeLine(startX + i * cellSize, startY, endX + i * cellSize, endY);
 
-        cellSize = 130;
-        startX = 380;
-        endX = 1490;
-        startY = endY = 106;
-        for (int i = 1; i < 5; i++)
+        cellSize = 123;
+        startX = 370;
+        endX = 1435;
+        startY = endY = 100;
+        for (int i = 1; i <= 5; i++)
             gc.strokeLine(startX, startY + i * cellSize, endX, endY + i * cellSize);
 
 
@@ -63,7 +66,7 @@ public class GameScreen extends Application {
         pane.getChildren().add(screenImage);
         pane.getChildren().add(canvas);
 
-        Scene screenScene = new Scene(pane, 1500, 750);
+        Scene screenScene = new Scene(pane, width, height);
         gameStage.setScene(screenScene);
         gameStage.show();
 
