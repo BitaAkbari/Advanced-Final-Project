@@ -39,6 +39,7 @@ public class GameScreen extends Application {
 
         pane.getChildren().addAll(screenImage, canvas);
         drawGrid(pane);
+        buildStore(pane);
 
 //        canvas.setOnMouseClicked((MouseEvent event) -> {
 //            double x = event.getX();
@@ -46,23 +47,6 @@ public class GameScreen extends Application {
 //            System.out.println(x + " " + y);
 //        });
 
-        Rectangle rectangle1 = new Rectangle(10, 10 , 130 , 90);
-        Rectangle rectangle2 = new Rectangle(10, 110 , 130 , 90);
-        Rectangle rectangle3 = new Rectangle(10, 210 , 130 , 90);
-        Rectangle rectangle4 = new Rectangle(10, 310 , 130 , 90);
-        Rectangle rectangle5 = new Rectangle(10, 410 , 130 , 90);
-        Rectangle rectangle6 = new Rectangle(10, 510 , 130 , 90);
-
-        Color rectangleColor = Color.RED;
-        for (Rectangle rectangle : new Rectangle[]{rectangle1, rectangle2, rectangle3,
-        rectangle4, rectangle5, rectangle6}) {
-            rectangle.setFill(rectangleColor);
-            rectangle.setStroke(Color.BLACK);
-            rectangle.setStrokeWidth(2);
-        }
-
-        pane.getChildren().addAll(rectangle1, rectangle2, rectangle3,
-                rectangle4, rectangle5, rectangle6);
 
         Scene screenScene = new Scene(pane, WIDTH, HEIGHT);
         gameStage.setScene(screenScene);
@@ -105,6 +89,15 @@ public class GameScreen extends Application {
     }
 
     private void buildStore(Pane pane) {
+        for (int i = 0; i < store.length; i++) {
+            store[i] = new Rectangle(10, 10 + (i * 100), 130, 90); // مختصات y با فاصله 100 پیکسل
+            store[i].setFill(Color.RED);
+            store[i].setStroke(Color.BLACK);
+            store[i].setStrokeWidth(2);
+        }
+        for (Rectangle rect : store) {
+            pane.getChildren().add(rect);
+        }
 
     }
 }
