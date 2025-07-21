@@ -8,11 +8,12 @@ public class Item {
     private int stdRechargeTime;
     private int remainingTime;
     private int price;
-    private boolean isSelected = false;
+    private boolean isSelected;
 
     public Item(ItemName name){
         this.name = name;
         remainingTime = 0;
+        isSelected = false;
         switch (name) {
             case SUNFLOWER:
                 price = 50;
