@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class GameScreen extends Application {
@@ -62,13 +63,31 @@ public class GameScreen extends Application {
             System.out.println(x + " " + y);
         });
 
+        Rectangle rectangle1 = new Rectangle(10, 10 , 130 , 90);
+        Rectangle rectangle2 = new Rectangle(10, 110 , 130 , 90);
+        Rectangle rectangle3 = new Rectangle(10, 210 , 130 , 90);
+        Rectangle rectangle4 = new Rectangle(10, 310 , 130 , 90);
+        Rectangle rectangle5 = new Rectangle(10, 410 , 130 , 90);
+        Rectangle rectangle6 = new Rectangle(10, 510 , 130 , 90);
 
-        pane.getChildren().add(screenImage);
-        pane.getChildren().add(canvas);
+        Color rectangleColor = Color.RED;
+        for (Rectangle rectangle : new Rectangle[]{rectangle1, rectangle2, rectangle3,
+        rectangle4, rectangle5, rectangle6}) {
+            rectangle.setFill(rectangleColor);
+            rectangle.setStroke(Color.BLACK);
+            rectangle.setStrokeWidth(2);
+        }
+
+        pane.getChildren().addAll(screenImage, canvas, rectangle1, rectangle2, rectangle3,
+                rectangle4, rectangle5, rectangle6);
 
         Scene screenScene = new Scene(pane, width, height);
         gameStage.setScene(screenScene);
         gameStage.show();
+
+
+
+
 
     }
 }
