@@ -50,6 +50,7 @@ public class GameScreen extends Application {
 
         Scene screenScene = new Scene(pane, WIDTH, HEIGHT);
         gameStage.setScene(screenScene);
+        gameStage.centerOnScreen();
         gameStage.show();
     }
 
@@ -90,7 +91,7 @@ public class GameScreen extends Application {
 
     private void buildStore(Pane pane) {
         for (int i = 0; i < store.length; i++) {
-            store[i] = new Rectangle(10, 10 + (i * 100), 130, 90); // مختصات y با فاصله 100 پیکسل
+            store[i] = new Rectangle(10, 10 + (i * 100), 130, 90);
             store[i].setFill(Color.RED);
             store[i].setStroke(Color.BLACK);
             store[i].setStrokeWidth(2);
