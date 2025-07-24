@@ -21,6 +21,7 @@ public class ItemSelectionScreen {
     private ArrayList<Item.ItemName> selectedItems; // bishtar az 6 nabayad ozv begire
     private Rectangle[] list;
     private Rectangle[] rect;
+    private ImageView[] selectedImages;
 
     public ItemSelectionScreen(Stage stage) {
 
@@ -31,6 +32,7 @@ public class ItemSelectionScreen {
         selectedItems = new ArrayList<>();
         list = new Rectangle[20];
         rect = new Rectangle[6];
+        selectedImages = new ImageView[6];
 
         Pane pane = new Pane();
 
@@ -46,7 +48,16 @@ public class ItemSelectionScreen {
         darken.setBrightness(-0.5);
         background.setEffect(darken);
 
+        Image selectionBackground = new Image(getClass().getResource("/Screen Images/selection background.png").toExternalForm());
+        ImageView selectionRect = new ImageView(selectionBackground);
+        selectionRect.setLayoutX(500);
+        selectionRect.setLayoutY(70);
+        selectionRect.setFitWidth(800);
+        selectionRect.setFitHeight(600);
+        pane.getChildren().add(selectionRect);
         drawItemList(pane);
+        loadSelectedItems(pane);
+        drawRect(pane);
 
         for (int i = 0; i < 17; i++) {
             final int index = i;
@@ -55,8 +66,21 @@ public class ItemSelectionScreen {
                     selectedItems.add(itemList[index]);
                     isSelected[index] = true;
                     System.out.println(index);
+                    loadSelectedItems(pane);
+                    drawRect(pane);
                 }
 
+            });
+        }
+
+        for (int i = 0; i < 6; i++){
+            final int index = i;
+            rect[i].setOnMouseClicked(e -> {
+                isSelected[index] = false;
+                selectedItems.remove(index);
+                removeSelectedItems(pane);
+                loadSelectedItems(pane);
+                drawRect(pane);
             });
         }
 
@@ -106,6 +130,36 @@ public class ItemSelectionScreen {
                 pane.getChildren().add(picture);
             }
             pane.getChildren().add(list[i]);
+        }
+    }
+
+    private void drawRect(Pane pane){
+        for (int i = 0; i <6; i++) {
+            rect[i] = new Rectangle(200, 100 + (i * 100), 130, 90);
+            rect[i].setFill(Color.TRANSPARENT);
+            rect[i].setStroke(Color.BLACK);
+            rect[i].setStrokeWidth(2);
+            pane.getChildren().add(rect[i]);
+        }
+
+    }
+
+    private void loadSelectedItems(Pane pane){
+        for(int i = 0; i < selectedItems.size(); i++){
+            int number = Item.getOrder(selectedItems.get(i));
+            Image image = new Image(getClass().getResource("/items/" + number + ".png").toExternalForm());
+            selectedImages[i] = new ImageView(image);
+            selectedImages[i].setFitWidth(130);
+            selectedImages[i].setFitHeight(90);
+            selectedImages[i].setLayoutX(200);
+            selectedImages[i].setLayoutY(100 + (i * 100));
+            pane.getChildren().add(selectedImages[i]);
+        }
+    }
+
+    private void removeSelectedItems(Pane pane){
+        for(int i = 0; i < 6; i++){
+            pane.getChildren().remove(selectedImages[i]);
         }
     }
 }

@@ -83,4 +83,26 @@ public class Item {
         this.isSelected = isSelected;
     }
 
+    public static int getOrder(ItemName item){
+        switch (item) {
+            case SUNFLOWER:
+                return ItemName.SUNFLOWER.ordinal();
+            case JALAPENO:
+                return ItemName.JALAPENO.ordinal();
+            case CHERRY_BOMB:
+                return ItemName.COFFEE_BEAN.ordinal();
+            case TALL_NUT:
+                return ItemName.TALL_NUT.ordinal();
+            case WALL_NUT:
+                return ItemName.WALL_NUT.ordinal();
+            case SNOW_PEA:
+                return ItemName.SNOW_PEA.ordinal();
+            case REPEATER:
+                return ItemName.REPEATER.ordinal();
+            case PEASHOOTER:
+                return ItemName.PEASHOOTER.ordinal();
+            default:return ItemName.SUNFLOWER.ordinal();
+        }
+    }
+
 }
