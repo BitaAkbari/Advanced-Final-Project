@@ -2,8 +2,11 @@ package advancedfinalproject.game.PlantsVsZombies;
 
 public class Item {
 
-    public enum ItemName {SUNFLOWER, JALAPENO, CHERRY_BOMB, TALL_NUT, WALL_NUT,
-        SNOW_PEA, REPEATER, PEASHOOTER};
+    public enum ItemName { SUNFLOWER, PEASHOOTER, REPEATER, SNOW_PEA,
+                           WALL_NUT, TALL_NUT, CHERRY_BOMB, JALAPENO,
+                           GRAVE_BUSTER, COFFEE_BEAN, HYPNO_SHROOM, PUFF_SHROOM,
+                           SCAREDY_SHROOM, DOOM_SHROOM, ICE_SHROOM, LANTERN, FAN };
+
     private ItemName name;
     private int stdRechargeTime;
     private int remainingTime;
