@@ -47,6 +47,7 @@ public class GameScreen extends Application {
 //            System.out.println(x + " " + y);
 //        });
 
+        ZombieHandler.sendZombie(pane);
 
         Scene screenScene = new Scene(pane, WIDTH, HEIGHT);
         gameStage.setScene(screenScene);
