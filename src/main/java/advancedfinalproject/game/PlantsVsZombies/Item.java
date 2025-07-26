@@ -50,6 +50,42 @@ public class Item {
                 price = 125;
                 stdRechargeTime = 5;
                 break;
+            case GRAVE_BUSTER:
+                price = 75;
+                stdRechargeTime = 6;
+                break;
+            case COFFEE_BEAN:
+                price = 75;
+                stdRechargeTime = 4;
+                break;
+            case HYPNO_SHROOM:
+                price = 75;
+                stdRechargeTime = 3;
+                break;
+            case PUFF_SHROOM:
+                price = 0;
+                stdRechargeTime = 3;
+                break;
+            case SCAREDY_SHROOM:
+                price = 25;
+                stdRechargeTime = 3;
+                break;
+            case DOOM_SHROOM:
+                price = 125;
+                stdRechargeTime = 4;
+                break;
+            case ICE_SHROOM:
+                price = 75;
+                stdRechargeTime = 3;
+                break;
+            case LANTERN:
+                price = 25;
+                stdRechargeTime = 4;
+                break;
+            case FAN:
+                price = 100;
+                stdRechargeTime = 4;
+                break;
         }
     }
 
