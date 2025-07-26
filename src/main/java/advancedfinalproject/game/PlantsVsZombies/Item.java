@@ -13,7 +13,7 @@ public class Item {
     private int price;
     private boolean isSelected;
 
-    public Item(ItemName name){
+    public Item(ItemName name) {
         this.name = name;
         remainingTime = 0;
         isSelected = false;
@@ -22,37 +22,35 @@ public class Item {
                 price = 50;
                 stdRechargeTime = 3;
                 break;
-            case JALAPENO:
-                price = 125;
-                stdRechargeTime = 5;
+            case PEASHOOTER:
+                price = 100;
+                stdRechargeTime = 2;
                 break;
-            case CHERRY_BOMB:
-                price = 150;
+            case REPEATER:
+                price = 200;
+                stdRechargeTime = 4;
+                break;
+            case SNOW_PEA:
+                price = 175;
+                stdRechargeTime = 3;
+                break;
+            case WALL_NUT:
+                price = 50;
                 stdRechargeTime = 6;
                 break;
             case TALL_NUT:
                 price = 125;
                 stdRechargeTime = 7;
                 break;
-            case WALL_NUT:
-                price = 50;
+            case CHERRY_BOMB:
+                price = 150;
                 stdRechargeTime = 6;
                 break;
-            case SNOW_PEA:
-                price = 175;
-                stdRechargeTime = 3;
+            case JALAPENO:
+                price = 125;
+                stdRechargeTime = 5;
                 break;
-            case REPEATER:
-                price = 200;
-                stdRechargeTime = 4;
-                break;
-            case PEASHOOTER:
-                price = 100;
-                stdRechargeTime = 2;
-                break;
-
         }
-
     }
 
     public ItemName getName() {
@@ -83,25 +81,44 @@ public class Item {
         this.isSelected = isSelected;
     }
 
-    public static int getOrder(ItemName item){
+    public static int getOrder(ItemName item) {
         switch (item) {
             case SUNFLOWER:
                 return ItemName.SUNFLOWER.ordinal();
-            case JALAPENO:
-                return ItemName.JALAPENO.ordinal();
-            case CHERRY_BOMB:
-                return ItemName.COFFEE_BEAN.ordinal();
-            case TALL_NUT:
-                return ItemName.TALL_NUT.ordinal();
-            case WALL_NUT:
-                return ItemName.WALL_NUT.ordinal();
-            case SNOW_PEA:
-                return ItemName.SNOW_PEA.ordinal();
-            case REPEATER:
-                return ItemName.REPEATER.ordinal();
             case PEASHOOTER:
                 return ItemName.PEASHOOTER.ordinal();
-            default:return ItemName.SUNFLOWER.ordinal();
+            case REPEATER:
+                return ItemName.REPEATER.ordinal();
+            case SNOW_PEA:
+                return ItemName.SNOW_PEA.ordinal();
+            case WALL_NUT:
+                return ItemName.WALL_NUT.ordinal();
+            case TALL_NUT:
+                return ItemName.TALL_NUT.ordinal();
+            case CHERRY_BOMB:
+                return ItemName.CHERRY_BOMB.ordinal();
+            case JALAPENO:
+                return ItemName.JALAPENO.ordinal();
+            case GRAVE_BUSTER:
+                return ItemName.GRAVE_BUSTER.ordinal();
+            case COFFEE_BEAN:
+                return ItemName.COFFEE_BEAN.ordinal();
+            case HYPNO_SHROOM:
+                return ItemName.HYPNO_SHROOM.ordinal();
+            case PUFF_SHROOM:
+                return ItemName.PUFF_SHROOM.ordinal();
+            case SCAREDY_SHROOM:
+                return ItemName.SCAREDY_SHROOM.ordinal();
+            case DOOM_SHROOM:
+                return ItemName.DOOM_SHROOM.ordinal();
+            case ICE_SHROOM:
+                return ItemName.ICE_SHROOM.ordinal();
+            case LANTERN:
+                return ItemName.LANTERN.ordinal();
+            case FAN:
+                return ItemName.FAN.ordinal();
+            default:
+                return 0;// ya exception partab kone
         }
     }
 

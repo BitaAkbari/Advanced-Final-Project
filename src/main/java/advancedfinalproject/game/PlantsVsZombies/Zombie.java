@@ -5,7 +5,7 @@ public class Zombie {
     private double centerX, centerY;
 
     public Zombie(double x, double y) {
-        speed = 1;
+        speed = 4.425;
         centerX = x;
         centerY = y;
     }
