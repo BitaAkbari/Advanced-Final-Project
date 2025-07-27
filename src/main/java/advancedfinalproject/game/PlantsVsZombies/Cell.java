@@ -6,10 +6,13 @@ public class Cell {
 
     private Content cellContent;
     private Plant plant;
+    private int row, col;
 
-    public Cell() {
+    public Cell(int row, int col) {
         cellContent = Content.BLANK;
         plant = null;
+        this.row = row;
+        this.col = col;
     }
 
     public boolean placePlant(Plant plant) {

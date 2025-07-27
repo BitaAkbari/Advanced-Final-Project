@@ -32,7 +32,7 @@ public class GameState {
 
         for (int i = 0; i < ROW_COUNT; i++)
             for (int j = 0; j < COL_COUNT; j++)
-                field[i][j] = new Cell();
+                field[i][j] = new Cell(i, j);
 
         zombieList = new ArrayList<Zombie>();
         sunList = new ArrayList<Sun>();
@@ -104,7 +104,7 @@ public class GameState {
 
     public boolean buyAndPlant(int cellRow, int cellCol) {
         if (selectedItem != null) {
-            if (field[cellRow][cellCol].placePlant(itemToPlant(selectedItem))) {
+            if (field[cellRow][cellCol].placePlant(itemToPlant(selectedItem, cellRow, cellCol))) {
                 sunPoint -= selectedItem.getPrice();
                 selectedItem = null;
                 return true;
@@ -113,7 +113,7 @@ public class GameState {
         return false;
     }
 
-    private Plant itemToPlant(Item item) {// bayad takmil beshe.................
-        return new Plant();
+    private Plant itemToPlant(Item item, int row, int col) {// bayad takmil beshe.................
+        return new Plant(row, col);
     }
 }
