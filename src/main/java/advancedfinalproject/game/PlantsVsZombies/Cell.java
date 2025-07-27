@@ -7,7 +7,7 @@ public class Cell {
     private Content cellContent;
     private Plant plant;
 
-    private Cell() {
+    public Cell() {
         cellContent = Content.BLANK;
         plant = null;
     }
