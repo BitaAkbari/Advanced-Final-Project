@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
-        ItemSelectionScreen itemSelection = new ItemSelectionScreen(primaryStage);
+       Menu menu = new Menu(primaryStage);
     }
 
     public static void main(String[] args) {
