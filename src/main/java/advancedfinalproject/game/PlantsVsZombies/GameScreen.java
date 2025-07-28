@@ -90,6 +90,7 @@ public class GameScreen {
 //        });
 
         ZombieHandler.sendZombie(pane);
+        PlantHandler.placePlant(pane);
 
         Scene screenScene = new Scene(pane, WIDTH, HEIGHT);
         gameStage.setScene(screenScene);
