@@ -163,7 +163,9 @@ public class ItemSelectionScreen {
             selectedRects[i].setOnMouseClicked(e -> {
                 //System.out.println(1);
                 if (index < selectedItems.size()) {
-                    int num = Item.getOrder(selectedItems.get(index));
+                    //int num = Item.getOrder(selectedItems.get(index));
+                    Item item = new Item(selectedItems.get(index));
+                    int num = item.getName().ordinal();
                     isSelected[num] = false;
                     selectedItems.remove(index);
                     //removeSelectedItems();
@@ -184,7 +186,9 @@ public class ItemSelectionScreen {
         for (; i < selectedItems.size(); i++) {
             if (selectedImages[i] != null)
                 pane.getChildren().remove(selectedImages[i]);
-            int number = Item.getOrder(selectedItems.get(i));
+            //int number = Item.getOrder(selectedItems.get(i));
+            Item tempItem = new Item(selectedItems.get(i));
+            int number = tempItem.getName().ordinal();
             Image image = new Image(getClass().getResource("/items/" + number + ".png").toExternalForm());
             selectedImages[i] = new ImageView(image);
             selectedImages[i].setFitWidth(width);

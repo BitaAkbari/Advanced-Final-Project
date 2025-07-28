@@ -11,7 +11,7 @@ public class GameState {
 
     private GameCode code;
     private int sunPoint;
-    private final int seconds[] = {0};
+    private final int[] seconds = {0};
     private Item.ItemName[] names;
     private final Item[] store = new Item[ITEM_COUNT];
     private final Cell[][] field = new Cell[ROW_COUNT][COL_COUNT];

@@ -117,45 +117,46 @@ public class Item {
         this.isSelected = isSelected;
     }
 
-    public static int getOrder(ItemName item) {
-        switch (item) {
-            case SUNFLOWER:
-                return ItemName.SUNFLOWER.ordinal();
-            case PEASHOOTER:
-                return ItemName.PEASHOOTER.ordinal();
-            case REPEATER:
-                return ItemName.REPEATER.ordinal();
-            case SNOW_PEA:
-                return ItemName.SNOW_PEA.ordinal();
-            case WALL_NUT:
-                return ItemName.WALL_NUT.ordinal();
-            case TALL_NUT:
-                return ItemName.TALL_NUT.ordinal();
-            case CHERRY_BOMB:
-                return ItemName.CHERRY_BOMB.ordinal();
-            case JALAPENO:
-                return ItemName.JALAPENO.ordinal();
-            case GRAVE_BUSTER:
-                return ItemName.GRAVE_BUSTER.ordinal();
-            case COFFEE_BEAN:
-                return ItemName.COFFEE_BEAN.ordinal();
-            case HYPNO_SHROOM:
-                return ItemName.HYPNO_SHROOM.ordinal();
-            case PUFF_SHROOM:
-                return ItemName.PUFF_SHROOM.ordinal();
-            case SCAREDY_SHROOM:
-                return ItemName.SCAREDY_SHROOM.ordinal();
-            case DOOM_SHROOM:
-                return ItemName.DOOM_SHROOM.ordinal();
-            case ICE_SHROOM:
-                return ItemName.ICE_SHROOM.ordinal();
-            case LANTERN:
-                return ItemName.LANTERN.ordinal();
-            case FAN:
-                return ItemName.FAN.ordinal();
-            default:
-                return 0;// ya exception partab kone
-        }
-    }
+    //public static int getOrder(ItemName item) {
+        //return item.ordinal();
+//        switch (item) {
+//            case SUNFLOWER:
+//                return ItemName.SUNFLOWER.ordinal();
+//            case PEASHOOTER:
+//                return ItemName.PEASHOOTER.ordinal();
+//            case REPEATER:
+//                return ItemName.REPEATER.ordinal();
+//            case SNOW_PEA:
+//                return ItemName.SNOW_PEA.ordinal();
+//            case WALL_NUT:
+//                return ItemName.WALL_NUT.ordinal();
+//            case TALL_NUT:
+//                return ItemName.TALL_NUT.ordinal();
+//            case CHERRY_BOMB:
+//                return ItemName.CHERRY_BOMB.ordinal();
+//            case JALAPENO:
+//                return ItemName.JALAPENO.ordinal();
+//            case GRAVE_BUSTER:
+//                return ItemName.GRAVE_BUSTER.ordinal();
+//            case COFFEE_BEAN:
+//                return ItemName.COFFEE_BEAN.ordinal();
+//            case HYPNO_SHROOM:
+//                return ItemName.HYPNO_SHROOM.ordinal();
+//            case PUFF_SHROOM:
+//                return ItemName.PUFF_SHROOM.ordinal();
+//            case SCAREDY_SHROOM:
+//                return ItemName.SCAREDY_SHROOM.ordinal();
+//            case DOOM_SHROOM:
+//                return ItemName.DOOM_SHROOM.ordinal();
+//            case ICE_SHROOM:
+//                return ItemName.ICE_SHROOM.ordinal();
+//            case LANTERN:
+//                return ItemName.LANTERN.ordinal();
+//            case FAN:
+//                return ItemName.FAN.ordinal();
+//            default:
+//                return 0;// ya exception partab kone
+//        }
 
+   // }
 }

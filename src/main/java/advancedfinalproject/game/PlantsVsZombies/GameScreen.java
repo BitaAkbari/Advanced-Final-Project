@@ -19,8 +19,16 @@ import javafx.util.Duration;
 public class GameScreen {
     public static final int WIDTH = 1500;
     public static final int HEIGHT = 750;
-    private final int ROW_COUNT = 5;
-    private final int COL_COUNT = 9;
+
+    public final int ROW_COUNT = 5;
+    public final int COL_COUNT = 9;
+
+    public static final int GRID_START_X = 370;
+    public static final int GRID_START_Y = 106;
+    public static final int CELL_WIDTH = 118;
+    public static final int CELL_HEIGHT = 123;
+
+
     private Rectangle[][] gridCells = new Rectangle[ROW_COUNT][COL_COUNT];
     private final int ITEM_COUNT = 6;
     private Rectangle[] store = new Rectangle[ITEM_COUNT];
@@ -90,14 +98,9 @@ public class GameScreen {
     }
 
     private void drawGrid(Pane pane) {
-        final int START_X = 370;
-        final int START_Y = 106;
-        final int CELL_WIDTH = 118;
-        final int CELL_HEIGHT = 123;
-
         for (int row = 0; row < ROW_COUNT; row++) {
             for (int col = 0; col < COL_COUNT; col++) {
-                Rectangle cell = new Rectangle(START_X + col * CELL_WIDTH, START_Y + row * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
+                Rectangle cell = new Rectangle(GRID_START_X + col * CELL_WIDTH, GRID_START_Y + row * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
                 cell.setFill(Color.TRANSPARENT);
                 cell.setStroke(Color.GREEN);
                 cell.setStrokeWidth(2);
@@ -137,7 +140,8 @@ public class GameScreen {
             store[i].setFill(Color.TRANSPARENT);
             store[i].setStroke(Color.BLACK);
             store[i].setStrokeWidth(2);
-            int number = Item.getOrder(gameState.getStore()[i].getName());
+            //int number = Item.getOrder(gameState.getStore()[i].getName());
+            int number = gameState.getStore()[i].getName().ordinal();
             Image image = new Image(getClass().getResource("/items/" + number + ".png").toExternalForm());
             ImageView itemImage = new ImageView(image);
             itemImage.setFitWidth(rectWidth);
