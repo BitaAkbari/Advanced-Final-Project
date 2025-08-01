@@ -19,19 +19,22 @@ public class Cell {
         if (cellContent == Content.BLANK) {
             this.plant = plant;
             cellContent = Content.PLANT;
+            if (plant instanceof BombPlant)
+                plant.act();
             return true;
         }
-        else return false;
+        return false;
     }
 
     public boolean removePlant() {
         if (cellContent == Content.PLANT) {
+            if (plant instanceof PeaPlant)
+                ((PeaPlant) plant).clear();
             plant = null;
             cellContent = Content.BLANK;
             return true;
         }
-        else return false;
-        //if....
+        return false;
     }
 
     public Content getCellContent() {
