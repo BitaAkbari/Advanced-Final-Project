@@ -1,7 +1,26 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+
 public class CherryBomb extends BombPlant {
-    public CherryBomb(int row, int col) {
-        super(row, col);
+    public CherryBomb(GameState gameState, int row, int col) {
+        super(gameState, row, col);
+    }
+
+    public void act() {
+        Timeline explode = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            for (Zombie zombie: gameState.getZombieList()) {
+                if (Math.abs(zombie.getRow() - getRow()) <= 1 &&
+                        Math.abs(zombie.getCol() - getCol()) <= 1) {
+                    zombie.burst();
+                }
+            }
+            hp = 0;
+        }));
+
+        explode.setCycleCount(1);
+        explode.play();
     }
 }

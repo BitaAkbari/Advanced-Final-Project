@@ -4,4 +4,8 @@ public class NutPlant extends Plant {
     public NutPlant(int row, int col) {
         super(row, col);
     }
+
+    public void act() {
+
+    }
 }

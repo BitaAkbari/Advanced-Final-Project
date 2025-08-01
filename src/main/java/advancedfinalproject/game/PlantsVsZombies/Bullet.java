@@ -1,42 +1,52 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
 public class Bullet {
-    private double speed;
-    private double centerX;
-    private double centerY;
-    private final double bulletLength = 20;
-    private final double bulletWidth = 20;
-    private int HP = 1;
 
-    public Bullet(double x, double y) {
-        centerX = x + bulletWidth /2;
-        centerY = y + bulletLength /2;
+    public enum BulletType {NORMAL, FROZEN};
+
+    private BulletType type;
+    private int row, col;
+    private double centerX, centerY;
+    private double speed;
+
+    public Bullet(BulletType type, int row, int col) {
+        this.type = type;
+        this.row = row;
+        this.col = col;
+        centerX = GameScreen.GRID_START_X + col * GameScreen.CELL_WIDTH + (90);
+        centerY = GameScreen.GRID_START_Y + row * GameScreen.CELL_HEIGHT + (30);
+        speed = 2; // har saniye 2 khoone
     }
 
+    public BulletType getType() {
+        return type;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
 
     public double getCenterX() {
         return centerX;
+    }
+
+    public void setCenterX(double x) {
+        centerX = x;
     }
 
     public double getCenterY() {
         return centerY;
     }
 
+    public void setCenterY(double y) {
+        centerY = y;
+    }
+
     public double getSpeed() {
         return speed;
     }
-
-    public int getHp() {
-        return HP;
-    }
-
-    public void setCenterX(double x) {
-        centerX = x + bulletWidth /2;
-    }
-
-    public void setCenterY(double y) {
-        centerY = y + bulletLength /2;
-    }
-
-
 }

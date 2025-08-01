@@ -1,11 +1,7 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Application;
+
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,32 +10,77 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class GameScreen {
     public static final int WIDTH = 1500;
     public static final int HEIGHT = 750;
 
-    public final int ROW_COUNT = 5;
-    public final int COL_COUNT = 9;
+    public final int ROW_COUNT = GameState.ROW_COUNT;
+    public final int COL_COUNT = GameState.COL_COUNT;
 
     public static final int GRID_START_X = 370;
     public static final int GRID_START_Y = 106;
     public static final int CELL_WIDTH = 118;
     public static final int CELL_HEIGHT = 123;
 
+    private class Shovel {
+        private Rectangle shovelBtn;
+        private ImageView shovelImage;
+        private boolean isSelected;
+
+        public Shovel(Pane pane) {
+            int width = 80, height = 50;
+            int startX = 400, startY = 10;
+
+            Image image = new Image(getClass().getResource("/buttons/shovelBtn.png").toExternalForm());
+            shovelImage = new ImageView(image);
+            shovelImage.setLayoutX(startX);
+            shovelImage.setLayoutY(startY);
+            shovelImage.setFitWidth(width);
+            shovelImage.setFitHeight(height);
+            pane.getChildren().add(shovelImage);
+
+            shovelBtn = new Rectangle(startX, startY, width, height);
+            shovelBtn.setFill(Color.TRANSPARENT);
+            pane.getChildren().add(shovelBtn);
+
+            isSelected = false;
+            shovelBtn.setOnMouseClicked(e -> {
+                if (gameState.getLastChoice() != -1) {
+                    store[gameState.getLastChoice()].setStroke(Color.BLACK);
+                    gameState.setLastChoice(-1);
+                }
+                changeSelection();
+            });
+        }
+
+        public boolean getIsSelected() {
+            return isSelected;
+        }
+
+        public void changeSelection() {
+            isSelected = !isSelected;
+            if (isSelected) {
+                shovelBtn.setStroke(Color.RED);
+            }
+            else {
+                shovelBtn.setStroke(Color.BLACK);
+            }
+        }
+    }
 
     private Rectangle[][] gridCells = new Rectangle[ROW_COUNT][COL_COUNT];
-    private final int ITEM_COUNT = 6;
+    private final int ITEM_COUNT = GameState.ITEM_COUNT;
     private Rectangle[] store = new Rectangle[ITEM_COUNT];
     private GameState gameState;
-//    private Item.ItemName[] items;
     Label point;
+    GameHandler gameHandler;
+    static Label timerLabel;
+    Shovel shovel;
 
     public void start(Stage gameStage, Item.ItemName[] selectedItems) {
 
         Pane pane = new Pane();
-        //items = selectedItems;
         gameState = new GameState(selectedItems);
 
         gameStage.setTitle("game screen");
@@ -52,10 +93,8 @@ public class GameScreen {
         screenImage.fitWidthProperty().bind(pane.widthProperty());
         screenImage.fitHeightProperty().bind(pane.heightProperty());
 
-        Canvas canvas = new Canvas(WIDTH, HEIGHT);
-        //GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        pane.getChildren().addAll(screenImage, canvas);
+        pane.getChildren().addAll(screenImage);
         drawGrid(pane);
         buildStore(pane);
 
@@ -67,30 +106,18 @@ public class GameScreen {
         point.setFont(Font.font("Arial", 40));
         pane.getChildren().add(point);
 //        ---------------------------------------------------------------
-        Label timerLabel = new Label("0 s");
+        timerLabel = new Label("0 s");
         timerLabel.setLayoutX(800);
         timerLabel.setLayoutY(20);
         timerLabel.setFont(Font.font("Arial", 40));
         pane.getChildren().add(timerLabel);
 
-        //final int[] seconds = {0};
-        Timeline timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            //seconds[0]++;
-            gameState.setSeconds();
-            timerLabel.setText(/*seconds[0]*/gameState.getSeconds() + " s");
-        }));
-        timer.setCycleCount(Timeline.INDEFINITE);
-        timer.play();
 //          ------------------------------------------------------------------
 
-//        canvas.setOnMouseClicked((MouseEvent event) -> {
-//            double x = event.getX();
-//            double y = event.getY();
-//            System.out.println(x + " " + y);
-//        });
+        shovel = new Shovel(pane);
 
-        ZombieHandler.sendZombie(pane);
-        PlantHandler.placePlant(pane);
+        gameHandler = new GameHandler(pane, gameState);
+
 
         Scene screenScene = new Scene(pane, WIDTH, HEIGHT);
         gameStage.setScene(screenScene);
@@ -120,12 +147,21 @@ public class GameScreen {
 
                 // vaghti click shod
                 cell.setOnMouseClicked(e -> {
-                    System.out.println(cellRow + ", " + cellCol + " is clicked");
+                    //System.out.println(cellRow + ", " + cellCol + " is clicked");
                     if (gameState.buyAndPlant(cellRow, cellCol)) {
                         store[gameState.getLastChoice()].setStroke(Color.BLACK);
                         gameState.setLastChoice(-1);
+                        point.setText(gameState.getSunPoint() + "");
+                        gameHandler.getPlantHandler().addPlant(cellRow, cellCol);
+                        gameHandler.getZombieHandler().updateImages();
                     }
-                    point.setText(gameState.getSunPoint() + "");
+                    else if (gameState.getField()[cellRow][cellCol].getPlant() != null) {
+                        if (shovel.isSelected) {
+                            gameState.getField()[cellRow][cellCol].removePlant();
+                            gameHandler.getPlantHandler().deletePlant(cellRow, cellCol);
+                            shovel.changeSelection();
+                        }
+                    }
                 });
 
                 pane.getChildren().add(cell);
@@ -141,7 +177,7 @@ public class GameScreen {
             store[i].setFill(Color.TRANSPARENT);
             store[i].setStroke(Color.BLACK);
             store[i].setStrokeWidth(2);
-            //int number = Item.getOrder(gameState.getStore()[i].getName());
+
             int number = gameState.getStore()[i].getName().ordinal();
             Image image = new Image(getClass().getResource("/items/" + number + ".png").toExternalForm());
             ImageView itemImage = new ImageView(image);
@@ -154,11 +190,13 @@ public class GameScreen {
 
             final int index = i;
             store[i].setOnMouseClicked(e -> {
-                if (gameState.setSelectItem(index)) {
+                if (gameState.selectItem(index)) {
                     if (gameState.getLastChoice() != -1)
                         store[gameState.getLastChoice()].setStroke(Color.BLACK);
                     store[index].setStroke(Color.RED);
                     gameState.setLastChoice(index);
+                    if (shovel.isSelected)
+                        shovel.changeSelection();
                 }
                 else {
                     store[index].setStroke(Color.BLACK);
@@ -166,5 +204,9 @@ public class GameScreen {
                 }
             });
         }
+    }
+
+    public static void setTimerLabel(String newTime) {
+        timerLabel.setText(newTime);
     }
 }

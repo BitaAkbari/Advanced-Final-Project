@@ -19,8 +19,8 @@ public class GameState {
     private ArrayList<Sun> sunList;
     private ArrayList<Bullet> bulletList;
     private Item selectedItem;
-    private Cell selectedCell;
-    private int lastChoice = -1;
+    //private Cell selectedCell;
+    private int lastChoice;
 
     public GameState(Item.ItemName[] itemNames) {
         code = GameCode.DAY;
@@ -39,7 +39,8 @@ public class GameState {
         bulletList = new ArrayList<Bullet>();
 
         selectedItem = null;
-        selectedCell = null;
+        //selectedCell = null;
+        lastChoice = -1;
     }
 
     public GameCode getCode() {
@@ -90,7 +91,7 @@ public class GameState {
         lastChoice = index;
     }
 
-    public boolean setSelectItem(int index) {
+    public boolean selectItem(int index) {
         if (selectedItem == store[index]) {
             selectedItem = null;
             return false;
@@ -113,7 +114,26 @@ public class GameState {
         return false;
     }
 
-    private Plant itemToPlant(Item item, int row, int col) {// bayad takmil beshe.................
-        return new Plant(row, col);
+    private Plant itemToPlant(Item item, int row, int col) {
+        switch (item.getName()) {
+            case SUNFLOWER:
+                return new Sunflower(row, col);
+            case PEASHOOTER:
+                return new Peashooter(row, col);
+            case REPEATER:
+                return new Repeater(row, col);
+            case SNOW_PEA:
+                return new SnowPea(row, col);
+            case WALL_NUT:
+                return new WallNut(row, col);
+            case TALL_NUT:
+                return new TallNut(row, col);
+            case CHERRY_BOMB:
+                return new CherryBomb(this, row, col);
+            case JALAPENO:
+                return new Jalapeno(this, row, col);
+            default:
+                return null;
+        }
     }
 }
