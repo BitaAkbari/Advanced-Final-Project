@@ -1,12 +1,15 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
-public class Plant {
+public abstract class Plant {
     private int row, col;
+    protected int hp;
 
     public Plant(int row, int col) {
         this.row = row;
         this.col = col;
     }
+
+    public abstract void act();
 
     public int getRow() {
         return row;
@@ -14,5 +17,13 @@ public class Plant {
 
     public int getCol() {
         return col;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void reduceHp() {
+        hp --;
     }
 }
