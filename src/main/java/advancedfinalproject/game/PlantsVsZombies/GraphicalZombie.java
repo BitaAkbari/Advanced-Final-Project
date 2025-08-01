@@ -10,7 +10,7 @@ import javafx.util.Duration;
 
 public class GraphicalZombie {
     private Zombie zombie;
-    private ZombieHandler.ZombieType zombieType;
+    private Zombie.ZombieType zombieType;
     private int frameCount;
     private int frameNo;
     private Image[] frames;
@@ -20,16 +20,17 @@ public class GraphicalZombie {
     private double zombieX, zombieY;
     private double speed, currSpeed;
     private Circle dot;/////////////
+    private final int DELAY = 150;
 
 
-    public GraphicalZombie(Zombie z, ZombieHandler.ZombieType type) {
+    public GraphicalZombie(Zombie z, Zombie.ZombieType type) {
 
         zombie = z;
         zombieType = type;
 
         zombieX = centerX_To_X();
         zombieY = centerY_To_Y();
-        currSpeed = speed = zombie.getSpeed();
+        currSpeed = speed = zombie.getSpeed() * GameScreen.CELL_WIDTH * DELAY / 1000;
 
         String folderName = "";
         switch(zombieType) {
@@ -63,22 +64,21 @@ public class GraphicalZombie {
         zombieImage.setLayoutX(zombieX);
         zombieImage.setLayoutY(zombieY);
 
-        dot = new Circle(zombieX, zombie.getY(), 5);//////////////////////
+        dot = new Circle(zombie.getCenterX(), zombie.getCenterY(), 5);//////////////////////
         dot.setFill(Color.RED);///////////////
 
         frameNo = 0;
-        timeline = new Timeline(new KeyFrame(Duration.millis(150), e -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(DELAY), e -> {
             frameNo = (frameNo + 1) % frameCount;
             zombieImage.setImage(frames[frameNo]);
             zombieX = centerX_To_X();
             zombieX -= currSpeed;
             if (zombieX < -zombieImage.getFitWidth())
                 zombieX = 1500;
-            zombie.setX(xToCenterX());
+            zombie.setCenterX(xToCenterX());
             zombieImage.setLayoutX(zombieX);
-            dot.setCenterX(zombie.getX());/////////////
+            dot.setCenterX(zombie.getCenterX());/////////////
         }));
-
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
@@ -94,9 +94,16 @@ public class GraphicalZombie {
     public void stop() {
         timeline.pause();
     }
-
     public void start() {
         timeline.play();
+    }
+
+    public void eating() {
+        currSpeed = 0;
+    }
+
+    public void walking() {
+        currSpeed = speed;
     }
 
     private double xToCenterX() {
@@ -104,12 +111,14 @@ public class GraphicalZombie {
     }
 
     private double centerX_To_X() {
-        return zombie.getX() - ZOMBIE_WIDTH / 2;
+        return zombie.getCenterX() - ZOMBIE_WIDTH / 2;
     }
 
     private double centerY_To_Y() {
-        return zombie.getY() - ZOMBIE_HEIGHT / 2;
+        return zombie.getCenterY() - ZOMBIE_HEIGHT / 2;
     }
 
-
+    public Zombie getZombie() {
+        return zombie;
+    }
 }
