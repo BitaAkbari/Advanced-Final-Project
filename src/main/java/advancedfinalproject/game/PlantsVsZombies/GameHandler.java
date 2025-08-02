@@ -13,7 +13,9 @@ public class GameHandler {
     private ZombieHandler zombieHandler;
     private PlantHandler plantHandler;
     private ArrayList<GraphicalBullet> graphicalBullets;
+    private ArrayList<GraphicalSun> graphicalSuns;
     private Pane pane;
+
 
 
     public GameHandler(Pane pane, GameState state) {
@@ -23,6 +25,7 @@ public class GameHandler {
         zombieHandler = new ZombieHandler(pane, gameState);
         plantHandler = new PlantHandler(pane, gameState);
         graphicalBullets = new ArrayList<>();
+        graphicalSuns = new ArrayList<>();
 
         Timeline timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             gameState.setSeconds();
@@ -50,6 +53,15 @@ public class GameHandler {
         }));
         checkLoop.setCycleCount(Timeline.INDEFINITE);
         checkLoop.play();
+
+        Timeline sunGenerator = new Timeline(new KeyFrame(Duration.seconds(12), e -> {
+            Sun sun = new Sun();
+            GraphicalSun graphicalSun = new GraphicalSun(sun);
+            graphicalSuns.add(graphicalSun);
+            pane.getChildren().add(graphicalSun.getSunImage());
+        }));
+
+
 
 
     }

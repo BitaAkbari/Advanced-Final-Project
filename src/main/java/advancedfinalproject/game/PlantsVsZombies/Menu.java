@@ -16,11 +16,11 @@ public class Menu {
     private Pane pane;
     private Circle dayGameBtn, nightGameBtn;
     //private ImageView dayImage, nightImage;
-    private int btnWidth = 280;
-    private int btnHeight = 280;
+    private int btnWidth = 340;
+    private int btnHeight = 340;
     private int btnStartX = 400;
-    private int btnStartY = 590;
-    private int btnRadius = 140;
+    private int btnStartY = 450;
+    private int btnRadius = 170;
     //private int verticalSpace = 10;
 
     public Menu(Stage stage) {
@@ -43,7 +43,7 @@ public class Menu {
     }
 
     private void setScreen() {
-        Image screen = new Image(getClass().getResource("/Screen Images/menu background4.jpg").toExternalForm());
+        Image screen = new Image(getClass().getResource("/Screen Images/menu background3.jpg").toExternalForm());
         ImageView screenImage = new ImageView(screen);
         screenImage.fitWidthProperty().bind(pane.widthProperty());
         screenImage.fitHeightProperty().bind(pane.heightProperty());
