@@ -96,7 +96,7 @@ public class GameState {
             selectedItem = null;
             return false;
         }
-        else if (sunPoint >= store[index].getPrice()) {
+        else if (!store[index].getIsSelected() && sunPoint >= store[index].getPrice()) {
             selectedItem = store[index];
             return true;
         }
@@ -106,6 +106,7 @@ public class GameState {
     public boolean buyAndPlant(int cellRow, int cellCol) {
         if (selectedItem != null) {
             if (field[cellRow][cellCol].placePlant(itemToPlant(selectedItem, cellRow, cellCol))) {
+                selectedItem.charge();
                 sunPoint -= selectedItem.getPrice();
                 selectedItem = null;
                 return true;

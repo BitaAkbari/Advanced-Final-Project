@@ -1,5 +1,9 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+
 public class Item {
 
     public enum ItemName { SUNFLOWER, PEASHOOTER, REPEATER, SNOW_PEA,
@@ -113,7 +117,16 @@ public class Item {
         this.remainingTime = remainingTime;
     }
 
-    public void setIsSelected(boolean isSelected) {
-        this.isSelected = isSelected;
+//    public void setIsSelected(boolean isSelected) {
+//        this.isSelected = isSelected;
+//    }
+
+    public void charge() {
+        isSelected = true;
+        Timeline recharge = new Timeline(new KeyFrame(Duration.seconds(stdRechargeTime), e -> {
+            isSelected = false;
+        }));
+        recharge.setCycleCount(1);
+        recharge.play();
     }
 }

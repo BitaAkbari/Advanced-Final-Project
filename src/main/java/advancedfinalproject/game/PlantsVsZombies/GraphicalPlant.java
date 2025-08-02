@@ -55,13 +55,13 @@ public class GraphicalPlant {
             isAnimation = true;
         }
         else if (plant.getClass() == SnowPea.class) {
-            frameCount = 11;
+            frameCount = 15;//11
             folderName += "snow pea/";
-            delay = 150;
-            plantWidth -= 50;
-            plantHeight -= 20;
-            x += 25;
-            y += 10;
+            delay = 100;//150
+            //plantWidth -= 50;
+            plantHeight += 20;
+            //x += 25;
+            //y += 10;
             isAnimation = true;
         }
         else if (plant.getClass() == WallNut.class) {

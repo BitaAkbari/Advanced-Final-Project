@@ -13,7 +13,7 @@ public class Jalapeno extends BombPlant {
     public void act() {
         Timeline explode = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             for (Zombie zombie: gameState.getZombieList()) {
-                if (zombie.getRow() == getRow()) {
+                if (zombie.getRow() == getRow() && zombie.getCenterX() >= GameScreen.GRID_START_X) {
                     zombie.burst();
                 }
             }

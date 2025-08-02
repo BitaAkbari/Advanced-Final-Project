@@ -46,6 +46,7 @@ public class GameHandler {
             checkBulletHit();
             checkDeadPlants();
             checkDeadZombies();
+            checkLose();
         }));
         checkLoop.setCycleCount(Timeline.INDEFINITE);
         checkLoop.play();
@@ -91,7 +92,7 @@ public class GameHandler {
         return false;
     }
 
-    public void shoot() {
+    private void shoot() {
         for (int i = 0; i < GameState.ROW_COUNT; i++)
             for (int j = 0; j < GameState.COL_COUNT; j++)
                 if (gameState.getField()[i][j].getPlant() instanceof PeaPlant) {
@@ -114,7 +115,7 @@ public class GameHandler {
                 }
     }
 
-    public void checkBulletHit() {
+    private void checkBulletHit() {
         ArrayList<GraphicalBullet> expiredBullets = new ArrayList<>();
         for (GraphicalBullet gb: graphicalBullets) {
             boolean sw = false; //baraye inke do ta zombie ro hadaf nagire
@@ -154,5 +155,15 @@ public class GameHandler {
                 pane.getChildren().removeAll(gz.getZombieImage(), gz.getDot());
             }
         zombieHandler.getGraphicalZombies().removeAll(deadZombies);
+    }
+
+    private boolean checkLose() {
+        for (GraphicalZombie graphicalZombie: zombieHandler.getGraphicalZombies()) {
+            if (graphicalZombie.getZombie().getCenterX() < GameScreen.GRID_START_X) {
+                graphicalZombie.stop();
+                return true;
+            }
+        }
+        return false;
     }
 }
