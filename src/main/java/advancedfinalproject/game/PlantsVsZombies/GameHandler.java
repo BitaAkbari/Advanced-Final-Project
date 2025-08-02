@@ -60,6 +60,8 @@ public class GameHandler {
             graphicalSuns.add(graphicalSun);
             pane.getChildren().add(graphicalSun.getSunImage());
         }));
+        sunGenerator.setCycleCount(Timeline.INDEFINITE);
+        sunGenerator.play();
 
 
 

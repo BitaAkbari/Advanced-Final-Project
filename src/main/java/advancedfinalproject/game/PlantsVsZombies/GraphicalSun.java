@@ -21,7 +21,7 @@ public class GraphicalSun {
         sunImage = new ImageView(image);
         sunImage.setFitWidth(WIDTH);
         sunImage.setFitHeight(HEIGHT);
-        sunImage.setLayoutY(-HEIGHT);
+        sunImage.setLayoutY(0 - HEIGHT);
         sunImage.setLayoutX(sun.getX());
         if(sun.getSpeed() != 0) {
             double speed = sun.getSpeed() * GameScreen.CELL_HEIGHT * DELAY / 1000;
@@ -30,9 +30,11 @@ public class GraphicalSun {
               sun.setY(y);
               sunImage.setLayoutY(y);
               if (y >= sun.getRealY()) {
-                  move.stop();
+                  ((Timeline) e.getSource()).stop();
               }
             }));
+            move.setCycleCount(Timeline.INDEFINITE);
+            move.play();
         }
     }
 
