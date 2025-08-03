@@ -19,7 +19,7 @@ public class Cell {
         if (cellContent == Content.BLANK) {
             this.plant = plant;
             cellContent = Content.PLANT;
-            if (plant instanceof BombPlant)
+            if (plant instanceof BombPlant || plant instanceof Sunflower)
                 plant.act();
             return true;
         }
@@ -28,8 +28,7 @@ public class Cell {
 
     public boolean removePlant() {
         if (cellContent == Content.PLANT) {
-            if (plant instanceof PeaPlant)
-                ((PeaPlant) plant).clear();
+            plant.clear();
             plant = null;
             cellContent = Content.BLANK;
             return true;

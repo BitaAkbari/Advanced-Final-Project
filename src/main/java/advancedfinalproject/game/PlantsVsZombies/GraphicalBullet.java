@@ -14,6 +14,7 @@ public class GraphicalBullet {
     private final double BULLET_WIDTH = 20;
     private final double BULLET_HEIGHT = 20;
     private final int DELAY = 100;
+    private Timeline moving;
 
     public GraphicalBullet(Bullet b) {
         bullet = b;
@@ -37,7 +38,7 @@ public class GraphicalBullet {
 
         double speed = bullet.getSpeed() * GameScreen.CELL_WIDTH * DELAY / 1000;
 
-        Timeline moving = new Timeline(new KeyFrame(Duration.millis(DELAY), e -> {
+        moving = new Timeline(new KeyFrame(Duration.millis(DELAY), e -> {
             double x = bullet.getCenterX() + speed;
             bullet.setCenterX(x);
             dot.setCenterX(x);//////////////
@@ -67,4 +68,9 @@ public class GraphicalBullet {
     private double centerY_To_Y() {
         return bullet.getCenterY() - BULLET_HEIGHT / 2;
     }
+
+    public void stop() {
+        moving.stop();
+    }
+
 }

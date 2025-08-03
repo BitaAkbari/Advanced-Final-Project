@@ -18,19 +18,17 @@ public class GraphicalZombie {
     public static final double ZOMBIE_WIDTH = 90, ZOMBIE_HEIGHT = 120;
     private Timeline timeline;
     private double zombieX, zombieY;
-    private double speed, currSpeed;
     private Circle dot;/////////////
     private final int DELAY = 150;
 
 
-    public GraphicalZombie(Zombie z, Zombie.ZombieType type) {
+    public GraphicalZombie(Zombie z) {
 
         zombie = z;
-        zombieType = type;
+        zombieType = z.getType();
 
         zombieX = centerX_To_X();
         zombieY = centerY_To_Y();
-        currSpeed = speed = zombie.getSpeed() * GameScreen.CELL_WIDTH * DELAY / 1000;
 
         String folderName = "";
         switch(zombieType) {
@@ -47,8 +45,8 @@ public class GraphicalZombie {
                 folderName = "/screen door zombie/";
                 break;
             case IMP_ZOMBIE:
-                //frameCount = ;
-                //folderName = "/imp zombie/";
+                frameCount = 1;
+                folderName = "/imp zombie/";
                 break;
         }
 
@@ -72,7 +70,7 @@ public class GraphicalZombie {
             frameNo = (frameNo + 1) % frameCount;
             zombieImage.setImage(frames[frameNo]);
             zombieX = centerX_To_X();
-            zombieX -= currSpeed;
+            zombieX -= zombie.getSpeed() * GameScreen.CELL_WIDTH * DELAY / 1000;
             if (zombieX < -zombieImage.getFitWidth())
                 zombieX = 1500;
             zombie.setCenterX(xToCenterX());
@@ -96,14 +94,6 @@ public class GraphicalZombie {
     }
     public void start() {
         timeline.play();
-    }
-
-    public void eating() {
-        currSpeed = 0;
-    }
-
-    public void walking() {
-        currSpeed = speed;
     }
 
     private double xToCenterX() {

@@ -2,6 +2,7 @@ package advancedfinalproject.game.PlantsVsZombies;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
@@ -9,12 +10,14 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 
 public class GameHandler {
-    private GameState gameState;
+    private static GameState gameState;
     private ZombieHandler zombieHandler;
     private PlantHandler plantHandler;
     private ArrayList<GraphicalBullet> graphicalBullets;
-    private ArrayList<GraphicalSun> graphicalSuns;
-    private Pane pane;
+    private static ArrayList<GraphicalSun> graphicalSuns;
+    private static Pane pane;
+    private Timeline timer, checkLoop, sunGenerator;
+    private Timeline eating;
 
 
 
@@ -27,7 +30,7 @@ public class GameHandler {
         graphicalBullets = new ArrayList<>();
         graphicalSuns = new ArrayList<>();
 
-        Timeline timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+        timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             gameState.setSeconds();
             GameScreen.setTimerLabel(gameState.getSeconds() + " s");
         }));
@@ -37,34 +40,41 @@ public class GameHandler {
         zombieHandler.sendZombie();
 
         // in bayad 0.5s bemoone chon dar har dor ejra yek joon az giyah kam mikone
-        Timeline eating = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
+        eating = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
             checkEatingPlant();
         }));
         eating.setCycleCount(Timeline.INDEFINITE);
         eating.play();
 
 
-        Timeline checkLoop = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+        checkLoop = new Timeline(new KeyFrame(Duration.millis(100), e -> {
             shoot();
             checkBulletHit();
             checkDeadPlants();
             checkDeadZombies();
+            checkExpiredSuns();
             checkLose();
         }));
         checkLoop.setCycleCount(Timeline.INDEFINITE);
         checkLoop.play();
 
-        Timeline sunGenerator = new Timeline(new KeyFrame(Duration.seconds(12), e -> {
+        sunGenerator = new Timeline(new KeyFrame(Duration.seconds(4), e -> {
             Sun sun = new Sun();
-            GraphicalSun graphicalSun = new GraphicalSun(sun);
-            graphicalSuns.add(graphicalSun);
-            pane.getChildren().add(graphicalSun.getSunImage());
+            handleSun(sun);
+
         }));
         sunGenerator.setCycleCount(Timeline.INDEFINITE);
         sunGenerator.play();
 
-
-
+        Timeline checkWin = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
+            if (gameState.getZombieList().isEmpty()) {
+                //System.out.println("you won");
+                stopAllTimelines();
+            }
+        }));
+        checkWin.setCycleCount(Timeline.INDEFINITE);
+        checkWin.setDelay(Duration.seconds(60));
+        checkWin.play();
 
     }
 
@@ -76,12 +86,26 @@ public class GameHandler {
         return zombieHandler;
     }
 
-    private void checkEatingPlant() {
-        ArrayList<GraphicalZombie> zombies = zombieHandler.getGraphicalZombies();
+    public static void handleSun(Sun sun) {
+        gameState.getSunList().add(sun);
+        GraphicalSun graphicalSun = new GraphicalSun(sun);
+        graphicalSuns.add(graphicalSun);
+        pane.getChildren().add(graphicalSun.getSunImage());
+        graphicalSun.getSunImage().setOnMouseClicked(event -> {
+            pane.getChildren().remove(graphicalSun.getSunImage());
+            graphicalSuns.remove(graphicalSun);
+            gameState.getSunList().remove(graphicalSun.getSun());
+            gameState.addPoint();
+            GameScreen.setPointLabel(gameState.getSunPoint() + "");
+        });
+    }
 
-        for (GraphicalZombie zombie: zombies) {
-            int row = zombie.getZombie().getRow();
-            int col = zombie.getZombie().getCol();
+    private void checkEatingPlant() {
+        ArrayList<Zombie> zombies = gameState.getZombieList();
+
+        for (Zombie zombie: zombies) {
+            int row = zombie.getRow();
+            int col = zombie.getCol();
             if (row < 0 || row >= GameState.ROW_COUNT || col < 0 || col >= GameState.COL_COUNT)
                 continue;
             if (gameState.getField()[row][col].getPlant() != null) {
@@ -133,14 +157,19 @@ public class GameHandler {
         ArrayList<GraphicalBullet> expiredBullets = new ArrayList<>();
         for (GraphicalBullet gb: graphicalBullets) {
             boolean sw = false; //baraye inke do ta zombie ro hadaf nagire
-            for (GraphicalZombie gz : zombieHandler.getGraphicalZombies())
+            for (GraphicalZombie gz : zombieHandler.getGraphicalZombies()) {
                 if (!sw && gb.getBullet().getRow() == gz.getZombie().getRow()
-                        && gb.getBullet().getCol() <= gz.getZombie().getCol())
+                        && gb.getBullet().getCol() <= gz.getZombie().getCol()) {
                     if (Math.abs(gb.getBullet().getCenterX() - gz.getZombie().getCenterX()) <= 30) {
                         gz.getZombie().reduceHp();
+                        if (gb.getBullet().getType() == Bullet.BulletType.FROZEN) {
+                            gz.getZombie().slowDown();
+                        }
                         expiredBullets.add(gb);
                         sw = true;
                     }
+                }
+            }
         }
         for (GraphicalBullet gb: expiredBullets) {
             gameState.getBulletList().remove(gb.getBullet());
@@ -148,6 +177,19 @@ public class GameHandler {
             //pane.getChildren().remove(gb.getDot());
         }
         graphicalBullets.removeAll(expiredBullets);
+    }
+
+    private void checkExpiredSuns() {
+        ArrayList<GraphicalSun> expiredSuns = new ArrayList<>();
+        for (GraphicalSun graphicalSun: graphicalSuns) {
+            if (!graphicalSun.getSun().getIsAlive())
+                expiredSuns.add(graphicalSun);
+        }
+        for (GraphicalSun graphicalSun: expiredSuns) {
+            gameState.getSunList().remove(graphicalSun.getSun());
+            pane.getChildren().remove(graphicalSun.getSunImage());
+        }
+        graphicalSuns.removeAll(expiredSuns);
     }
 
     private void checkDeadPlants() {
@@ -174,10 +216,41 @@ public class GameHandler {
     private boolean checkLose() {
         for (GraphicalZombie graphicalZombie: zombieHandler.getGraphicalZombies()) {
             if (graphicalZombie.getZombie().getCenterX() < GameScreen.GRID_START_X) {
-                graphicalZombie.stop();
+                stopAllTimelines();
                 return true;
             }
         }
         return false;
+    }
+
+    private void stopAllTimelines() {
+        timer.stop();
+        sunGenerator.stop();
+        checkLoop.stop();
+        eating.stop();
+        zombieHandler.clear();
+        for (GraphicalZombie graphicalZombie : zombieHandler.getGraphicalZombies()) {
+            graphicalZombie.stop();
+        }
+        for (int i = 0; i < GameState.ROW_COUNT; i++)
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                if (plantHandler.getGraphicPlants()[i][j] != null)
+                    plantHandler.getGraphicPlants()[i][j].stop();
+                if (gameState.getField()[i][j].getPlant() != null)
+                    gameState.getField()[i][j].getPlant().clear();
+            }
+        for (GraphicalBullet bullet: graphicalBullets)
+            bullet.stop();
+        for (GraphicalSun sun: graphicalSuns) {
+            sun.getSunImage().setMouseTransparent(true);
+            sun.stop();
+        }
+
+        for (Node node : pane.getChildren()) {
+            if (node.getUserData() instanceof GraphicalSun gs) {
+                gs.stop();
+            }
+        }
+
     }
 }

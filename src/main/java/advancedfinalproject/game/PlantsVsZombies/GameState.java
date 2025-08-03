@@ -24,7 +24,7 @@ public class GameState {
 
     public GameState(Item.ItemName[] itemNames) {
         code = GameCode.DAY;
-        sunPoint = 1000; // in ro bayad be 0 taghir bedim ba'dan
+        sunPoint = 100; // in ro bayad be 0 taghir bedim ba'dan
 
         names = itemNames;
         for (int i = 0; i < ITEM_COUNT; i++)

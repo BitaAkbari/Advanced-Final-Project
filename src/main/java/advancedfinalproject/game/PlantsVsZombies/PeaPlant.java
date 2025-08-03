@@ -37,6 +37,7 @@ public class PeaPlant extends Plant {
             shootTimeline.pause();
     }
 
+    @Override
     public void clear() {
         if (shootTimeline != null) {
             shootTimeline.stop();

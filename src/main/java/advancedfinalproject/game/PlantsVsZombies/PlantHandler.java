@@ -29,4 +29,8 @@ public class PlantHandler {
         graphicPlants[row][col].stop();
         graphicPlants[row][col] = null;
     }
+
+    public GraphicalPlant[][] getGraphicPlants() {
+        return graphicPlants;
+    }
 }

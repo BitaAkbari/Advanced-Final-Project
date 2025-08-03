@@ -11,6 +11,10 @@ public abstract class Plant {
 
     public abstract void act();
 
+    public void clear() {
+
+    }
+
     public int getRow() {
         return row;
     }

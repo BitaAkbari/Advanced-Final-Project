@@ -1,15 +1,20 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class GameScreen {
     public static final int WIDTH = 1500;
@@ -73,7 +78,7 @@ public class GameScreen {
     private final int ITEM_COUNT = GameState.ITEM_COUNT;
     private Rectangle[] store = new Rectangle[ITEM_COUNT];
     private GameState gameState;
-    Label point;
+    static Label point;
     GameHandler gameHandler;
     static Label timerLabel;
     Shovel shovel;
@@ -100,11 +105,20 @@ public class GameScreen {
 
 //        --------------------------------------------------------------------
 
-        point = new Label("1000");
-        point.setLayoutX(1000);
+        Image pointImage = new Image(getClass().getResource("/Screen Images/point label.png").toExternalForm());
+        ImageView pointLabel = new ImageView(pointImage);
+        pointLabel.setFitWidth(150);
+        pointLabel.setFitHeight(50);
+        pointLabel.setLayoutX(250);
+        pointLabel.setLayoutY(10);
+        pane.getChildren().add(pointLabel);
+
+        point = new Label("" + gameState.getSunPoint());
+        point.setLayoutX(300);
         point.setLayoutY(10);
         point.setFont(Font.font("Arial", 40));
         pane.getChildren().add(point);
+
 //        ---------------------------------------------------------------
         timerLabel = new Label("0 s");
         timerLabel.setLayoutX(800);
@@ -150,6 +164,14 @@ public class GameScreen {
                     //System.out.println(cellRow + ", " + cellCol + " is clicked");
                     if (gameState.buyAndPlant(cellRow, cellCol)) {
                         store[gameState.getLastChoice()].setStroke(Color.BLACK);
+                        store[gameState.getLastChoice()].setFill(Color.rgb(64, 64, 64, 0.7));
+                        int rechargeTime = gameState.getStore()[gameState.getLastChoice()].getStdRechargeTime();
+                        int index = gameState.getLastChoice();
+                        Timeline recharge = new Timeline(new KeyFrame(Duration.seconds(rechargeTime), ev -> {
+                            store[index].setFill(Color.TRANSPARENT);
+                        }));
+                        recharge.setCycleCount(1);
+                        recharge.play();
                         gameState.setLastChoice(-1);
                         point.setText(gameState.getSunPoint() + "");
                         gameHandler.getPlantHandler().addPlant(cellRow, cellCol);
@@ -208,5 +230,9 @@ public class GameScreen {
 
     public static void setTimerLabel(String newTime) {
         timerLabel.setText(newTime);
+    }
+
+    public static void setPointLabel(String newPoint) {
+        point.setText(newPoint);
     }
 }

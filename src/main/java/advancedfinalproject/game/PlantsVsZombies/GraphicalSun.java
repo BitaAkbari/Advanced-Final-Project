@@ -10,9 +10,10 @@ public class GraphicalSun {
     private Sun sun;
     private ImageView sunImage;
     private String path;
-    private final int WIDTH = 30;
-    private final int HEIGHT = 30;
-    private final int DELAY = 100;
+    private final int WIDTH = 100;
+    private final int HEIGHT = 100;
+    private final int DELAY = 90;
+    private Timeline move;
 
     public GraphicalSun(Sun sun) {
         this.sun = sun;
@@ -21,20 +22,28 @@ public class GraphicalSun {
         sunImage = new ImageView(image);
         sunImage.setFitWidth(WIDTH);
         sunImage.setFitHeight(HEIGHT);
-        sunImage.setLayoutY(0 - HEIGHT);
         sunImage.setLayoutX(sun.getX());
+
         if(sun.getSpeed() != 0) {
+            sunImage.setLayoutY(-HEIGHT);
             double speed = sun.getSpeed() * GameScreen.CELL_HEIGHT * DELAY / 1000;
-            Timeline move = new Timeline(new KeyFrame(Duration.millis(DELAY), e -> {
-              double y = sun.getY() + speed;
-              sun.setY(y);
-              sunImage.setLayoutY(y);
-              if (y >= sun.getRealY()) {
-                  ((Timeline) e.getSource()).stop();
-              }
+
+            move = new Timeline();
+            move.getKeyFrames().add(new KeyFrame(Duration.millis(DELAY), e -> {
+                double y = sun.getY() + speed;
+                if (y >= sun.getRealY()) {
+                    //y = sun.getRealY();
+                    move.stop();
+                    sun.startTimeline();
+                }
+                sun.setY(y);
+                sunImage.setLayoutY(y);
             }));
             move.setCycleCount(Timeline.INDEFINITE);
             move.play();
+        }
+        else {
+            sunImage.setLayoutY(sun.getY());
         }
     }
 
@@ -44,5 +53,9 @@ public class GraphicalSun {
 
     public ImageView getSunImage() {
         return sunImage;
+    }
+
+    public void stop() {
+        move.stop();
     }
 }

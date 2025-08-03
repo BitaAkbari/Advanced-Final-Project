@@ -149,7 +149,7 @@ public class GraphicalPlant {
 
     public void stop() {
         if (moveTimeline != null)
-            moveTimeline.pause();
+            moveTimeline.stop();
     }
 
     public void start() {
