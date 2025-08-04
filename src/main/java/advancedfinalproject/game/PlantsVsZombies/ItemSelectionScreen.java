@@ -32,9 +32,11 @@ public class ItemSelectionScreen {
     private int selectionBgHeight;
     private double selectionBgStartX;
     private double selectionBgStartY;
+    private Stage stage;
 
     public ItemSelectionScreen(Stage stage) {
 
+        this.stage = stage;
         itemList = Item.ItemName.values();
         isSelected = new boolean[TOTAL_ITEM_COUNT];
         for (int i = 0; i < TOTAL_ITEM_COUNT; i++)
@@ -53,6 +55,7 @@ public class ItemSelectionScreen {
         loadSelectedItems();
         drawSelectedRects();
         drawPlayBtn();
+        drawMenu();
 
         for (int i = 0; i < TOTAL_ITEM_COUNT; i++) {
             final int index = i;
@@ -239,6 +242,28 @@ public class ItemSelectionScreen {
         });
         playBtn.setOnMouseExited(e -> {
             playBtn.setFill(Color.TRANSPARENT);
+        });
+    }
+
+    private void drawMenu() {
+        Image menuImage = new Image(getClass().getResource("/buttons/menu button.png").toExternalForm());
+        ImageView menuView = new ImageView(menuImage);
+        menuView.setFitWidth(200);
+        menuView.setFitHeight(70);
+        menuView.setLayoutX(1280);
+        menuView.setLayoutY(10);
+        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 200 , 70);
+        menuGameBtn.setStroke(Color.BLACK);
+        menuGameBtn.setFill(Color.TRANSPARENT);
+        pane.getChildren().addAll(menuView , menuGameBtn);
+        menuGameBtn.setOnMouseEntered(e -> {
+            menuGameBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+        });
+        menuGameBtn.setOnMouseExited(e -> {
+            menuGameBtn.setFill(Color.TRANSPARENT);
+        });
+        menuGameBtn.setOnMouseClicked( e -> {
+            new Menu(stage);
         });
     }
 }
