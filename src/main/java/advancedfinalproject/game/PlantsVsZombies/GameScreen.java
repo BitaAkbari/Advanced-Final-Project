@@ -10,11 +10,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.shape.Rectangle;
 
 public class GameScreen {
     public static final int WIDTH = 1500;
@@ -83,9 +85,12 @@ public class GameScreen {
     GameHandler gameHandler;
     static Label timerLabel;
     Shovel shovel;
+    private Stage gameStage;
+
 
     public void start(Stage gameStage, GameState.GameCode code, Item.ItemName[] selectedItems) {
 
+            this.gameStage = gameStage;
         Pane pane = new Pane();
         gameCode = code;
         gameState = new GameState(gameCode, selectedItems);
@@ -95,11 +100,16 @@ public class GameScreen {
         gameStage.setResizable(false); //size stage ro fix mikone
 
 
+        Image screen = new Image(getClass().getResource("/Screen Images/day-background.png").toExternalForm());
+        ImageView screenImage = new ImageView(screen);
+        screenImage.fitWidthProperty().bind(pane.widthProperty());
+        screenImage.fitHeightProperty().bind(pane.heightProperty());
 
 
         addScreenImage(pane);
         drawGrid(pane);
         buildStore(pane);
+        drawMenuBtn(pane);
 
 //        --------------------------------------------------------------------
 
@@ -241,6 +251,104 @@ public class GameScreen {
                 }
             });
         }
+    }
+
+    private void drawMenuBtn (Pane pane) {
+        int width = 300;
+        int height = 100;
+        int x = 600;
+        int y = 200;
+
+        Image menuImage = new Image(getClass().getResource("/buttons/menu button.png").toExternalForm());
+        ImageView menuView = new ImageView(menuImage);
+        menuView.setFitWidth(200);
+        menuView.setFitHeight(70);
+        menuView.setLayoutX(1280);
+        menuView.setLayoutY(10);
+        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 200 , 70);
+        menuGameBtn.setStroke(Color.BLACK);
+        menuGameBtn.setFill(Color.TRANSPARENT);
+        pane.getChildren().addAll(menuView , menuGameBtn);
+
+        menuGameBtn.setOnMouseClicked(e -> {
+            gameHandler.stopAllTimelines();
+            Image bgMenuImage = new Image(getClass().getResource("/buttons/menu button1.png").toExternalForm());
+            ImageView bgMenuView = new ImageView(bgMenuImage);
+            bgMenuView.setFitWidth(500);
+            bgMenuView.setFitHeight(600);
+            bgMenuView.setLayoutX(500);
+            bgMenuView.setLayoutY(75);
+            pane.getChildren().add(bgMenuView);
+
+            Image mainMenuImage = new Image(getClass().getResource("/buttons/main menu.png").toExternalForm());
+            ImageView mainMenuView = new ImageView(mainMenuImage);
+            mainMenuView.setFitWidth(width);
+            mainMenuView.setFitHeight(height);
+            mainMenuView.setLayoutX(x);
+            mainMenuView.setLayoutY(y);
+            Rectangle mainMenuBtn = new Rectangle(x , y , width , height);
+            mainMenuBtn.setStroke(Color.BLACK);
+            mainMenuBtn.setFill(Color.TRANSPARENT);
+            pane.getChildren().addAll(mainMenuView, mainMenuBtn);
+            mainMenuBtn.setOnMouseClicked(event -> {
+                pane.getChildren().remove(bgMenuView);
+                new Menu(gameStage);
+            });
+            mainMenuBtn.setOnMouseEntered(event -> {
+                mainMenuBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+            });
+            mainMenuBtn.setOnMouseExited(event -> {
+                mainMenuBtn.setFill(Color.TRANSPARENT);
+            });
+
+            Image restartImage = new Image(getClass().getResource("/buttons/restart level.png").toExternalForm());
+            ImageView restartView = new ImageView(restartImage);
+            restartView.setFitWidth(width);
+            restartView.setFitHeight(height);
+            restartView.setLayoutX(x);
+            restartView.setLayoutY(y + 120);
+            Rectangle restartBtn = new Rectangle(x , y + 120 , width , height);
+            restartBtn.setStroke(Color.BLACK);
+            restartBtn.setFill(Color.TRANSPARENT);
+            pane.getChildren().addAll(restartView, restartBtn);
+            restartBtn.setOnMouseClicked(event -> {
+                pane.getChildren().remove(bgMenuView);
+            });
+            restartBtn.setOnMouseEntered(event -> {
+                restartBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+            });
+            restartBtn.setOnMouseExited(event -> {
+                restartBtn.setFill(Color.TRANSPARENT);
+            });
+
+            Image backImage = new Image(getClass().getResource("/buttons/back to game.png").toExternalForm());
+            ImageView  backView = new ImageView(backImage);
+            backView.setFitWidth(width);
+            backView.setFitHeight(height);
+            backView.setLayoutX(x);
+            backView.setLayoutY(y + 240);
+            Rectangle backBtn = new Rectangle(x , y + 240 , width , height);
+            backBtn.setStroke(Color.BLACK);
+            backBtn.setFill(Color.TRANSPARENT);
+            pane.getChildren().addAll(backView, backBtn);
+            backBtn.setOnMouseClicked(event -> {
+                pane.getChildren().remove(bgMenuView);
+            });
+            backBtn.setOnMouseEntered(event -> {
+                backBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+            });
+            backBtn.setOnMouseExited(event -> {
+                backBtn.setFill(Color.TRANSPARENT);
+            });
+
+        });
+        menuGameBtn.setOnMouseEntered(e -> {
+            menuGameBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+        });
+        menuGameBtn.setOnMouseExited(e -> {
+            menuGameBtn.setFill(Color.TRANSPARENT);
+        });
+
     }
 
     public static void setTimerLabel(String newTime) {
