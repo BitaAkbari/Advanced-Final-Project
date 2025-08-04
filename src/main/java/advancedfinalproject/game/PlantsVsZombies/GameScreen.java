@@ -90,7 +90,7 @@ public class GameScreen {
 
     public void start(Stage gameStage, GameState.GameCode code, Item.ItemName[] selectedItems) {
 
-            this.gameStage = gameStage;
+        this.gameStage = gameStage;
         Pane pane = new Pane();
         gameCode = code;
         gameState = new GameState(gameCode, selectedItems);
