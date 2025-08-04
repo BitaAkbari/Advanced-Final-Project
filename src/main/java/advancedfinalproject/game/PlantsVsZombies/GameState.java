@@ -22,8 +22,8 @@ public class GameState {
     //private Cell selectedCell;
     private int lastChoice;
 
-    public GameState(Item.ItemName[] itemNames) {
-        code = GameCode.DAY;
+    public GameState(GameCode gameCode, Item.ItemName[] itemNames) {
+        code = gameCode;
         sunPoint = 100; // in ro bayad be 0 taghir bedim ba'dan
 
         names = itemNames;
@@ -133,6 +133,14 @@ public class GameState {
                 return new CherryBomb(this, row, col);
             case JALAPENO:
                 return new Jalapeno(this, row, col);
+            case GRAVE_BUSTER:
+                return new GraveBuster(row, col);
+            case COFFEE_BEAN:
+                return new CoffeeBean(row, col);
+            case LANTERN:
+                return new Lantern(row, col);
+            case FAN:
+                return new Fan(row, col);
             default:
                 return null;
         }

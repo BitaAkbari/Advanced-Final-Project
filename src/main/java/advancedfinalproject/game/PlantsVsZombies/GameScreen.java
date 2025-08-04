@@ -77,29 +77,27 @@ public class GameScreen {
     private Rectangle[][] gridCells = new Rectangle[ROW_COUNT][COL_COUNT];
     private final int ITEM_COUNT = GameState.ITEM_COUNT;
     private Rectangle[] store = new Rectangle[ITEM_COUNT];
+    private GameState.GameCode gameCode;
     private GameState gameState;
     static Label point;
     GameHandler gameHandler;
     static Label timerLabel;
     Shovel shovel;
 
-    public void start(Stage gameStage, Item.ItemName[] selectedItems) {
+    public void start(Stage gameStage, GameState.GameCode code, Item.ItemName[] selectedItems) {
 
         Pane pane = new Pane();
-        gameState = new GameState(selectedItems);
+        gameCode = code;
+        gameState = new GameState(gameCode, selectedItems);
 
         gameStage.setTitle("game screen");
         //gameStage.setMaximized(true);
         gameStage.setResizable(false); //size stage ro fix mikone
 
 
-        Image screen = new Image(getClass().getResource("/Screen Images/day-background.png").toExternalForm());
-        ImageView screenImage = new ImageView(screen);
-        screenImage.fitWidthProperty().bind(pane.widthProperty());
-        screenImage.fitHeightProperty().bind(pane.heightProperty());
 
 
-        pane.getChildren().addAll(screenImage);
+        addScreenImage(pane);
         drawGrid(pane);
         buildStore(pane);
 
@@ -139,12 +137,29 @@ public class GameScreen {
         gameStage.show();
     }
 
+    private void addScreenImage(Pane pane) {
+        String imageName;
+        if (gameCode == GameState.GameCode.DAY)
+            imageName = "day-background.png";
+        else
+            imageName = "night-background.png";
+
+        Image screen = new Image(getClass().getResource("/Screen Images/" + imageName).toExternalForm());
+        ImageView screenImage = new ImageView(screen);
+        screenImage.fitWidthProperty().bind(pane.widthProperty());
+        screenImage.fitHeightProperty().bind(pane.heightProperty());
+        pane.getChildren().add(screenImage);
+    }
+
     private void drawGrid(Pane pane) {
         for (int row = 0; row < ROW_COUNT; row++) {
             for (int col = 0; col < COL_COUNT; col++) {
                 Rectangle cell = new Rectangle(GRID_START_X + col * CELL_WIDTH, GRID_START_Y + row * CELL_HEIGHT, CELL_WIDTH, CELL_HEIGHT);
                 cell.setFill(Color.TRANSPARENT);
-                cell.setStroke(Color.GREEN);
+                if (gameCode == GameState.GameCode.DAY)
+                    cell.setStroke(Color.GREEN);
+                else
+                    cell.setStroke(Color.DARKBLUE);
                 cell.setStrokeWidth(2);
                 gridCells[row][col] = cell;
 
