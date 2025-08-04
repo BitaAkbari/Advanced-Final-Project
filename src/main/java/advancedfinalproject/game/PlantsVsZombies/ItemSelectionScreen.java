@@ -18,6 +18,7 @@ public class ItemSelectionScreen {
     private final int TOTAL_ITEM_COUNT = 17;
     public static final int SELECTED_COUNT = 6;
 
+    private GameState.GameCode code;
     private Item.ItemName[] itemList; // liste hameye giyahane mojood
     private boolean[] isSelected; // motanazer ba liste hameye giyahan
     private ArrayList<Item.ItemName> selectedItems; // liste entekhab haye karbar - 6 onsor
@@ -33,7 +34,9 @@ public class ItemSelectionScreen {
     private double selectionBgStartX;
     private double selectionBgStartY;
 
-    public ItemSelectionScreen(Stage stage) {
+    public ItemSelectionScreen(Stage stage, GameState.GameCode code) {
+
+        this.code = code;
 
         itemList = Item.ItemName.values();
         isSelected = new boolean[TOTAL_ITEM_COUNT];
@@ -77,7 +80,7 @@ public class ItemSelectionScreen {
                     items[i] = selectedItems.get(i);
                 }
                 GameScreen game = new GameScreen();
-                game.start(stage, items);
+                game.start(stage, code, items);
             }
         });
 
@@ -89,7 +92,13 @@ public class ItemSelectionScreen {
     }
 
     private void setBackground() {
-        Image screen = new Image(getClass().getResource("/Screen Images/day-background.png").toExternalForm());
+        String imageName;
+        if (code == GameState.GameCode.DAY)
+            imageName = "day-background.png";
+        else
+            imageName = "night-background.png";
+
+        Image screen = new Image(getClass().getResource("/Screen Images/" + imageName).toExternalForm());
         ImageView background = new ImageView(screen);
         background.fitWidthProperty().bind(pane.widthProperty());
         background.fitHeightProperty().bind(pane.heightProperty());
