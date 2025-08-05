@@ -11,13 +11,21 @@ public class GraphicalBullet {
     private Bullet bullet;
     private Circle dot;//////////////
     private ImageView bulletImage;
-    private final double BULLET_WIDTH = 20;
-    private final double BULLET_HEIGHT = 20;
+    private double bulletWidth;
+    private double bulletHeight;
     private final int DELAY = 100;
     private Timeline moving;
 
     public GraphicalBullet(Bullet b) {
         bullet = b;
+
+        if (bullet.getType() == Bullet.BulletType.PUFF_SHROOM_BULLET ||
+            bullet.getType() == Bullet.BulletType.SCARDY_SHROOM_BULLET) {
+            bulletWidth = bulletHeight = 15;
+        }
+        else {
+            bulletWidth = bulletHeight = 20;
+        }
 
         dot = new Circle(bullet.getCenterX(), bullet.getCenterY(), 3);////////
 
@@ -32,8 +40,8 @@ public class GraphicalBullet {
         Image image = new Image(getClass().getResource("/plants/bullets/" + imageName).toExternalForm());
 
         bulletImage = new ImageView(image);
-        bulletImage.setFitWidth(BULLET_WIDTH);
-        bulletImage.setFitHeight(BULLET_HEIGHT);
+        bulletImage.setFitWidth(bulletWidth);
+        bulletImage.setFitHeight(bulletHeight);
         bulletImage.setLayoutX(centerX_To_X());
         bulletImage.setLayoutY(centerY_To_Y());
 
@@ -64,11 +72,11 @@ public class GraphicalBullet {
     }
 
     private double centerX_To_X() {
-        return bullet.getCenterX() - BULLET_WIDTH / 2;
+        return bullet.getCenterX() - bulletWidth / 2;
     }
 
     private double centerY_To_Y() {
-        return bullet.getCenterY() - BULLET_HEIGHT / 2;
+        return bullet.getCenterY() - bulletHeight / 2;
     }
 
     public void stop() {
