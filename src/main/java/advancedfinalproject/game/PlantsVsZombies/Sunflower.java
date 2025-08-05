@@ -10,7 +10,7 @@ public class Sunflower extends Plant {
 
 
     public Sunflower(int row, int col) {
-        super(row, col);
+        super(PlantName.SUNFLOWER, row, col);
         hp = 4;
     }
 
