@@ -7,7 +7,7 @@ import javafx.util.Duration;
 public class Jalapeno extends BombPlant {
 
     public Jalapeno(GameState gameState, int row, int col) {
-        super(gameState, row, col);
+        super(gameState, PlantName.JALAPENO, row, col);
     }
 
     public void act() {

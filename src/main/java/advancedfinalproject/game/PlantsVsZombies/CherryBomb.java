@@ -6,7 +6,7 @@ import javafx.util.Duration;
 
 public class CherryBomb extends BombPlant {
     public CherryBomb(GameState gameState, int row, int col) {
-        super(gameState, row, col);
+        super(gameState, PlantName.CHERRY_BOMB, row, col);
     }
 
     public void act() {
