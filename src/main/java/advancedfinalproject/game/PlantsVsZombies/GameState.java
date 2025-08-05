@@ -135,10 +135,18 @@ public class GameState {
                 return new Jalapeno(this, row, col);
             case GRAVE_BUSTER:
                 return new GraveBuster(row, col);
-            case PUFF_SHROOM:
-                return new PuffShroom(row, col);
             case COFFEE_BEAN:
                 return new CoffeeBean(row, col);
+            case HYPNO_SHROOM:
+                return new HypnoShroom(row, col);
+            case PUFF_SHROOM:
+                return new PuffShroom(row, col);
+            case SCAREDY_SHROOM:
+                return new ScaredyShroom(row, col);
+            case DOOM_SHROOM:
+                return new DoomShroom(row, col);
+            case ICE_SHROOM:
+                return new IceShroom(row, col);
             case LANTERN:
                 return new Lantern(row, col);
             case FAN:

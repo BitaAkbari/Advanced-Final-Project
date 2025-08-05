@@ -58,13 +58,15 @@ public class GameHandler {
         checkLoop.setCycleCount(Timeline.INDEFINITE);
         checkLoop.play();
 
-        sunGenerator = new Timeline(new KeyFrame(Duration.seconds(4), e -> {
-            Sun sun = new Sun();
-            handleSun(sun);
+        if (gameState.getCode() == GameState.GameCode.DAY) {
+            sunGenerator = new Timeline(new KeyFrame(Duration.seconds(4), e -> {
+                Sun sun = new Sun();
+                handleSun(sun);
 
-        }));
-        sunGenerator.setCycleCount(Timeline.INDEFINITE);
-        sunGenerator.play();
+            }));
+            sunGenerator.setCycleCount(Timeline.INDEFINITE);
+            sunGenerator.play();
+        }
 
         Timeline checkWin = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
             if (gameState.getZombieList().isEmpty()) {
@@ -130,45 +132,63 @@ public class GameHandler {
         return false;
     }
 
+    private boolean isZombieInRangeFour(int row, int col) {
+        ArrayList<GraphicalZombie> zombies = zombieHandler.getGraphicalZombies();
+        int zombieRow, zombieCol;
+        for (GraphicalZombie zombie: zombies) {
+            zombieRow = zombie.getZombie().getRow();
+            zombieCol = zombie.getZombie().getCol();
+
+            if (zombieRow == row && zombieCol - col <= 4)
+                return true;
+        }
+        return false;
+    }
+
     private void shoot() {
         for (int i = 0; i < GameState.ROW_COUNT; i++)
-            for (int j = 0; j < GameState.COL_COUNT; j++)
-                if (gameState.getField()[i][j].getPlant() instanceof PeaPlant) {
-                    if (isZombieComing(i, j)) {
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                Plant plant = gameState.getField()[i][j].getPlant();
+                if (plant != null) {
+                    if (plant instanceof PeaPlant) {
+                        if (isZombieComing(i, j)) {
 
-                        gameState.getField()[i][j].getPlant().act();
+                            plant.act();
 
-                        ArrayList<Bullet> bullets = ((PeaPlant) gameState.getField()[i][j].getPlant()).getBullets();
-                        for (Bullet b : bullets) {
-                            gameState.getBulletList().add(b);
-                            GraphicalBullet gb = new GraphicalBullet(b);
-                            graphicalBullets.add(gb);
-                            pane.getChildren().add(gb.getBulletImage());
-                            //pane.getChildren().add(gb.getDot());///////////
-                        }
-                        ((PeaPlant) gameState.getField()[i][j].getPlant()).getBullets().clear();
+                            ArrayList<Bullet> bullets = ((PeaPlant) plant).getBullets();
+                            for (Bullet b : bullets) {
+                                gameState.getBulletList().add(b);
+                                GraphicalBullet gb = new GraphicalBullet(b);
+                                graphicalBullets.add(gb);
+                                pane.getChildren().add(gb.getBulletImage());
+                                //pane.getChildren().add(gb.getDot());///////////
+                            }
+                            ((PeaPlant) plant).getBullets().clear();
+                        } else
+                            ((PeaPlant) plant).stopAct();
                     }
-                    else
-                        ((PeaPlant) gameState.getField()[i][j].getPlant()).stopAct();
+                    else if (plant instanceof Shroom &&
+                            (gameState.getCode() == GameState.GameCode.NIGHT || !((Shroom) plant).isSleeping())) {
+                        if (plant.getClass() == PuffShroom.class) {
+                            if (isZombieInRangeFour(i, j)) {
+
+                                plant.act();
+
+                                ArrayList<Bullet> bullets = ((PuffShroom) plant).getBullets();
+                                for (Bullet b : bullets) {
+                                    gameState.getBulletList().add(b);
+                                    GraphicalBullet gb = new GraphicalBullet(b);
+                                    graphicalBullets.add(gb);
+                                    pane.getChildren().add(gb.getBulletImage());
+                                    //pane.getChildren().add(gb.getDot());///////////
+                                }
+                                ((PuffShroom) plant).getBullets().clear();
+                            } else
+                                ((PuffShroom) plant).stopAct();
+                        }
+                    }
                 }
-//                else if (gameState.getField()[i][j].getPlant().getClass() == PuffShroom.class) {
-//                    if (isZombieComing(i, j)) {
-//
-//                        gameState.getField()[i][j].getPlant().act();
-//
-//                        ArrayList<Bullet> bullets = ((PuffShroom) gameState.getField()[i][j].getPlant()).getBullets();
-//                        for (Bullet b : bullets) {
-//                            gameState.getBulletList().add(b);
-//                            GraphicalBullet gb = new GraphicalBullet(b);
-//                            graphicalBullets.add(gb);
-//                            pane.getChildren().add(gb.getBulletImage());
-//                            //pane.getChildren().add(gb.getDot());///////////
-//                        }
-//                        ((PuffShroom) gameState.getField()[i][j].getPlant()).getBullets().clear();
-//                    }
-//                    else
-//                        ((PuffShroom) gameState.getField()[i][j].getPlant()).stopAct();
-//                }
+            }
     }
 
     private void checkBulletHit() {
@@ -187,6 +207,13 @@ public class GameHandler {
                         sw = true;
                     }
                 }
+            }
+            if (!sw) {
+                if (gb.getBullet().getCenterX() >= GameScreen.WIDTH)
+                    expiredBullets.add(gb);
+                else if (gb.getBullet().getType() == Bullet.BulletType.PUFF_SHROOM_BULLET
+                        && (gb.getBullet().getCol() - gb.getBullet().getSourceCol()) > 4)
+                    expiredBullets.add(gb);
             }
         }
         for (GraphicalBullet gb: expiredBullets) {
@@ -243,7 +270,8 @@ public class GameHandler {
 
     public void stopAllTimelines() {
         timer.stop();
-        sunGenerator.stop();
+        if (sunGenerator != null)
+            sunGenerator.stop();
         checkLoop.stop();
         eating.stop();
         zombieHandler.clear();
@@ -266,6 +294,7 @@ public class GameHandler {
 
         for (Node node : pane.getChildren()) {
             if (node.getUserData() instanceof GraphicalSun gs) {
+                gs.getSunImage().setMouseTransparent(true);
                 gs.stop();
             }
         }
