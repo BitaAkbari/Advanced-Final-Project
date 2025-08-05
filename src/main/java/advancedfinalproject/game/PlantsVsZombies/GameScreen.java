@@ -140,7 +140,7 @@ public class GameScreen {
 
         shovel = new Shovel(pane);
 
-        gameHandler = new GameHandler(pane, gameState);
+        gameHandler = new GameHandler(pane, gameState, gameStage);
 
 
         Scene screenScene = new Scene(pane, WIDTH, HEIGHT);

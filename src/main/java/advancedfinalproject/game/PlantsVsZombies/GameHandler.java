@@ -3,8 +3,14 @@ package advancedfinalproject.game.PlantsVsZombies;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -18,11 +24,12 @@ public class GameHandler {
     private static Pane pane;
     private Timeline timer, checkLoop, sunGenerator;
     private Timeline eating;
+    private Stage stage;
 
 
 
-    public GameHandler(Pane pane, GameState state) {
-
+    public GameHandler(Pane pane, GameState state, Stage stage) {
+        this.stage = stage;
         this.pane = pane;
         gameState = state;
         zombieHandler = new ZombieHandler(pane, gameState);
@@ -262,8 +269,72 @@ public class GameHandler {
         for (GraphicalZombie graphicalZombie: zombieHandler.getGraphicalZombies()) {
             if (graphicalZombie.getZombie().getCenterX() < GameScreen.GRID_START_X) {
                 stopAllTimelines();
-                return true;
+
+                Rectangle darkOverlay = new Rectangle(0, 0, pane.getWidth(), pane.getHeight());
+                darkOverlay.setFill(Color.BLACK);
+                darkOverlay.setOpacity(0.6);
+                pane.getChildren().add(darkOverlay);
+
+                Image loseMessageImage = new Image(getClass().getResource("/buttons/lose message.png").toExternalForm());
+                ImageView loseMessageView = new ImageView(loseMessageImage);
+                Timeline gameOver = new Timeline(new KeyFrame(Duration.millis(0), ev -> {
+                    loseMessageView.setFitWidth(1400);
+                    loseMessageView.setFitHeight(650);
+                    loseMessageView.setLayoutX(50);
+                    loseMessageView.setLayoutY(50);
+
+                    pane.getChildren().add(loseMessageView);
+                }),
+                new KeyFrame(Duration.seconds(3), ev -> {
+                    pane.getChildren().remove(loseMessageView);
+                }),
+                new KeyFrame(Duration.seconds(3.5), ev -> {
+                    Image gameOverImage = new Image(getClass().getResource("/buttons/Game Over.png").toExternalForm());
+                    ImageView gameOverView= new ImageView(gameOverImage);
+                    gameOverView.setFitWidth(600);
+                    gameOverView.setFitHeight(400);
+                    gameOverView.setLayoutX(450);
+                    gameOverView.setLayoutY(175);
+
+                    Rectangle tryAgainBtn = new Rectangle(510 , 485 , 225 , 60);
+                    tryAgainBtn.setStroke(Color.BLACK);
+                    tryAgainBtn.setFill(Color.TRANSPARENT);
+                    tryAgainBtn.setOnMouseClicked(event -> {
+                        new ItemSelectionScreen(stage, gameState.getCode());
+                    });
+                    tryAgainBtn.setOnMouseEntered(event -> {
+                        tryAgainBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+                    });
+                    tryAgainBtn.setOnMouseExited(event -> {
+                        tryAgainBtn.setFill(Color.TRANSPARENT);
+                    });
+
+                    Rectangle mainMenuBtn = new Rectangle(760 ,485  , 225 , 60);
+                    mainMenuBtn.setStroke(Color.BLACK);
+                    mainMenuBtn.setFill(Color.TRANSPARENT);
+                    mainMenuBtn.setOnMouseClicked(event -> {
+                        new Menu(stage);
+                    });
+                    mainMenuBtn.setOnMouseEntered(event -> {
+                        mainMenuBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+                    });
+                    mainMenuBtn.setOnMouseExited(event -> {
+                        mainMenuBtn.setFill(Color.TRANSPARENT);
+                    });
+
+                    pane.getChildren().addAll(gameOverView, tryAgainBtn, mainMenuBtn);
+
+
+
+                }));
+
+
+                gameOver.setCycleCount(1);
+                gameOver.setDelay(Duration.seconds(1));
+                gameOver.play();
+
             }
+            return true;
         }
         return false;
     }
