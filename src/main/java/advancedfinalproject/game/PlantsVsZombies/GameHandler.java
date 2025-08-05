@@ -223,7 +223,7 @@ public class GameHandler {
         return false;
     }
 
-    public void stopAllTimelines() {
+    private void stopAllTimelines() {
         timer.stop();
         sunGenerator.stop();
         checkLoop.stop();

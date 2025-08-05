@@ -66,7 +66,7 @@ public class Menu {
         pane.getChildren().add(dayGameBtn);
 
         dayGameBtn.setOnMouseClicked(e -> {
-            ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage);
+            ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage, GameState.GameCode.DAY);
         });
         dayGameBtn.setOnMouseEntered(e -> {
             dayGameBtn.setStroke(Color.RED);
@@ -92,7 +92,7 @@ public class Menu {
         pane.getChildren().add(nightGameBtn);
 
         nightGameBtn.setOnMouseClicked(e -> {
-            ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage);
+            ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage, GameState.GameCode.NIGHT);
         });
         nightGameBtn.setOnMouseEntered(e -> {
             nightGameBtn.setStroke(Color.RED);

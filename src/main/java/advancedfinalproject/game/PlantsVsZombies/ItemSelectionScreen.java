@@ -18,6 +18,7 @@ public class ItemSelectionScreen {
     private final int TOTAL_ITEM_COUNT = 17;
     public static final int SELECTED_COUNT = 6;
 
+    private GameState.GameCode code;
     private Item.ItemName[] itemList; // liste hameye giyahane mojood
     private boolean[] isSelected; // motanazer ba liste hameye giyahan
     private ArrayList<Item.ItemName> selectedItems; // liste entekhab haye karbar - 6 onsor
@@ -32,11 +33,11 @@ public class ItemSelectionScreen {
     private int selectionBgHeight;
     private double selectionBgStartX;
     private double selectionBgStartY;
-    private Stage stage;
 
-    public ItemSelectionScreen(Stage stage) {
+    public ItemSelectionScreen(Stage stage, GameState.GameCode code) {
 
-        this.stage = stage;
+        this.code = code;
+
         itemList = Item.ItemName.values();
         isSelected = new boolean[TOTAL_ITEM_COUNT];
         for (int i = 0; i < TOTAL_ITEM_COUNT; i++)
@@ -55,7 +56,6 @@ public class ItemSelectionScreen {
         loadSelectedItems();
         drawSelectedRects();
         drawPlayBtn();
-        drawMenu();
 
         for (int i = 0; i < TOTAL_ITEM_COUNT; i++) {
             final int index = i;
@@ -80,7 +80,7 @@ public class ItemSelectionScreen {
                     items[i] = selectedItems.get(i);
                 }
                 GameScreen game = new GameScreen();
-                game.start(stage, items);
+                game.start(stage, code, items);
             }
         });
 
@@ -92,7 +92,13 @@ public class ItemSelectionScreen {
     }
 
     private void setBackground() {
-        Image screen = new Image(getClass().getResource("/Screen Images/day-background.png").toExternalForm());
+        String imageName;
+        if (code == GameState.GameCode.DAY)
+            imageName = "day-background.png";
+        else
+            imageName = "night-background.png";
+
+        Image screen = new Image(getClass().getResource("/Screen Images/" + imageName).toExternalForm());
         ImageView background = new ImageView(screen);
         background.fitWidthProperty().bind(pane.widthProperty());
         background.fitHeightProperty().bind(pane.heightProperty());
@@ -242,28 +248,6 @@ public class ItemSelectionScreen {
         });
         playBtn.setOnMouseExited(e -> {
             playBtn.setFill(Color.TRANSPARENT);
-        });
-    }
-
-    private void drawMenu() {
-        Image menuImage = new Image(getClass().getResource("/buttons/menu button.png").toExternalForm());
-        ImageView menuView = new ImageView(menuImage);
-        menuView.setFitWidth(200);
-        menuView.setFitHeight(70);
-        menuView.setLayoutX(1280);
-        menuView.setLayoutY(10);
-        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 200 , 70);
-        menuGameBtn.setStroke(Color.BLACK);
-        menuGameBtn.setFill(Color.TRANSPARENT);
-        pane.getChildren().addAll(menuView , menuGameBtn);
-        menuGameBtn.setOnMouseEntered(e -> {
-            menuGameBtn.setFill(Color.rgb(200, 200, 200, 0.1));
-        });
-        menuGameBtn.setOnMouseExited(e -> {
-            menuGameBtn.setFill(Color.TRANSPARENT);
-        });
-        menuGameBtn.setOnMouseClicked( e -> {
-            new Menu(stage);
         });
     }
 }
