@@ -257,11 +257,11 @@ public class ItemSelectionScreen {
     private void drawMenu() {
         Image menuImage = new Image(getClass().getResource("/buttons/menu button.png").toExternalForm());
         ImageView menuView = new ImageView(menuImage);
-        menuView.setFitWidth(200);
-        menuView.setFitHeight(70);
+        menuView.setFitWidth(150);
+        menuView.setFitHeight(50);
         menuView.setLayoutX(1280);
         menuView.setLayoutY(10);
-        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 200 , 70);
+        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 150 , 50);
         menuGameBtn.setStroke(Color.BLACK);
         menuGameBtn.setFill(Color.TRANSPARENT);
         pane.getChildren().addAll(menuView , menuGameBtn);

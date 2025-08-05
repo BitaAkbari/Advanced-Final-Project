@@ -171,7 +171,7 @@ public class GameScreen {
                 if (gameCode == GameState.GameCode.DAY)
                     cell.setStroke(Color.GREEN);
                 else
-                    cell.setStroke(Color.DARKBLUE);
+                    cell.setStroke(Color.rgb(10, 50, 30));
                 cell.setStrokeWidth(2);
                 gridCells[row][col] = cell;
 
@@ -180,7 +180,10 @@ public class GameScreen {
 
                 // vaghti mouse rooye grid harekat mikone
                 cell.setOnMouseEntered(e -> {
-                    cell.setFill(Color.rgb(0, 255, 0, 0.2)); // sabze shaffaf
+                    if (gameCode == GameState.GameCode.DAY)
+                        cell.setFill(Color.rgb(0, 255, 0, 0.2)); // sabze shaffaf
+                    else
+                        cell.setFill(Color.rgb(10, 50, 30, 0.5));
                 });
                 cell.setOnMouseExited(e -> {
                     cell.setFill(Color.TRANSPARENT);
@@ -221,8 +224,9 @@ public class GameScreen {
     private void buildStore(Pane pane) {
         int rectWidth = 130;
         int rectHeight = 90;
+        int startX = 60;
         for (int i = 0; i < store.length; i++) {
-            store[i] = new Rectangle(20, 10 + (i * 100), rectWidth, rectHeight);
+            store[i] = new Rectangle(startX, 10 + (i * 100), rectWidth, rectHeight);
             store[i].setFill(Color.TRANSPARENT);
             store[i].setStroke(Color.BLACK);
             store[i].setStrokeWidth(2);
@@ -232,7 +236,7 @@ public class GameScreen {
             ImageView itemImage = new ImageView(image);
             itemImage.setFitWidth(rectWidth);
             itemImage.setFitHeight(rectHeight);
-            itemImage.setLayoutX(20);
+            itemImage.setLayoutX(startX);
             itemImage.setLayoutY(10 + (i * 100));
             pane.getChildren().add(itemImage);
             pane.getChildren().add(store[i]);
@@ -263,11 +267,11 @@ public class GameScreen {
 
         Image menuImage = new Image(getClass().getResource("/buttons/menu button.png").toExternalForm());
         ImageView menuView = new ImageView(menuImage);
-        menuView.setFitWidth(200);
-        menuView.setFitHeight(70);
+        menuView.setFitWidth(150);
+        menuView.setFitHeight(50);
         menuView.setLayoutX(1280);
         menuView.setLayoutY(10);
-        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 200 , 70);
+        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 150 , 50);
         menuGameBtn.setStroke(Color.BLACK);
         menuGameBtn.setFill(Color.TRANSPARENT);
         pane.getChildren().addAll(menuView , menuGameBtn);
@@ -315,7 +319,7 @@ public class GameScreen {
             pane.getChildren().addAll(restartView, restartBtn);
             restartBtn.setOnMouseClicked(event -> {
                 //pane.getChildren().remove(bgMenuView);
-                this.start(gameStage, gameCode, items);
+                new ItemSelectionScreen(gameStage, gameCode);
             });
             restartBtn.setOnMouseEntered(event -> {
                 restartBtn.setFill(Color.rgb(200, 200, 200, 0.1));
