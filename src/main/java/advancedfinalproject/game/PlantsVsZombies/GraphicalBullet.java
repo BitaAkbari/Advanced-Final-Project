@@ -24,8 +24,10 @@ public class GraphicalBullet {
         String imageName;
         if (b.getType() == Bullet.BulletType.NORMAL)
             imageName = "bullet.png";
-        else
+        else if (b.getType() == Bullet.BulletType.FROZEN)
             imageName = "frozen-bullet.png";
+        else
+            imageName = "shroom-bullet.png";
 
         Image image = new Image(getClass().getResource("/plants/bullets/" + imageName).toExternalForm());
 

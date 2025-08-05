@@ -151,6 +151,24 @@ public class GameHandler {
                     else
                         ((PeaPlant) gameState.getField()[i][j].getPlant()).stopAct();
                 }
+//                else if (gameState.getField()[i][j].getPlant().getClass() == PuffShroom.class) {
+//                    if (isZombieComing(i, j)) {
+//
+//                        gameState.getField()[i][j].getPlant().act();
+//
+//                        ArrayList<Bullet> bullets = ((PuffShroom) gameState.getField()[i][j].getPlant()).getBullets();
+//                        for (Bullet b : bullets) {
+//                            gameState.getBulletList().add(b);
+//                            GraphicalBullet gb = new GraphicalBullet(b);
+//                            graphicalBullets.add(gb);
+//                            pane.getChildren().add(gb.getBulletImage());
+//                            //pane.getChildren().add(gb.getDot());///////////
+//                        }
+//                        ((PuffShroom) gameState.getField()[i][j].getPlant()).getBullets().clear();
+//                    }
+//                    else
+//                        ((PuffShroom) gameState.getField()[i][j].getPlant()).stopAct();
+//                }
     }
 
     private void checkBulletHit() {

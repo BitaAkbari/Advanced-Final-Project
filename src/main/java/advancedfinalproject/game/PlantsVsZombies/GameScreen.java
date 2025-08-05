@@ -86,11 +86,13 @@ public class GameScreen {
     static Label timerLabel;
     Shovel shovel;
     private Stage gameStage;
+    private Item.ItemName[] items;
 
 
     public void start(Stage gameStage, GameState.GameCode code, Item.ItemName[] selectedItems) {
 
         this.gameStage = gameStage;
+        items = selectedItems;
         Pane pane = new Pane();
         gameCode = code;
         gameState = new GameState(gameCode, selectedItems);
@@ -291,7 +293,7 @@ public class GameScreen {
             mainMenuBtn.setFill(Color.TRANSPARENT);
             pane.getChildren().addAll(mainMenuView, mainMenuBtn);
             mainMenuBtn.setOnMouseClicked(event -> {
-                pane.getChildren().remove(bgMenuView);
+                //pane.getChildren().remove(bgMenuView);
                 new Menu(gameStage);
             });
             mainMenuBtn.setOnMouseEntered(event -> {
@@ -312,7 +314,8 @@ public class GameScreen {
             restartBtn.setFill(Color.TRANSPARENT);
             pane.getChildren().addAll(restartView, restartBtn);
             restartBtn.setOnMouseClicked(event -> {
-                pane.getChildren().remove(bgMenuView);
+                //pane.getChildren().remove(bgMenuView);
+                this.start(gameStage, gameCode, items);
             });
             restartBtn.setOnMouseEntered(event -> {
                 restartBtn.setFill(Color.rgb(200, 200, 200, 0.1));
@@ -332,7 +335,7 @@ public class GameScreen {
             backBtn.setFill(Color.TRANSPARENT);
             pane.getChildren().addAll(backView, backBtn);
             backBtn.setOnMouseClicked(event -> {
-                pane.getChildren().remove(bgMenuView);
+                //pane.getChildren().remove(bgMenuView);
             });
             backBtn.setOnMouseEntered(event -> {
                 backBtn.setFill(Color.rgb(200, 200, 200, 0.1));

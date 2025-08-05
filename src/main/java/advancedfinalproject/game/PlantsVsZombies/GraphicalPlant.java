@@ -30,6 +30,123 @@ public class GraphicalPlant {
 
 
         String folderName = "/plants/";
+        String imageName = "";
+
+//        switch (plant.getType()) {
+//            case SUNFLOWER:
+//                frameCount = 31;
+//                folderName += "sunflower/";
+//                delay = 50;
+//                isAnimation = true;
+//                break;
+//            case PEASHOOTER:
+//                frameCount = 24;
+//                folderName += "peashooter/";
+//                delay = 100;
+//                plantWidth -= 50;
+//                plantHeight -= 20;
+//                x += 25;
+//                y += 10;
+//                isAnimation = true;
+//                break;
+//            case REPEATER:
+//                frameCount = 28;
+//                folderName += "repeater/";
+//                delay = 50;
+//                plantHeight += 10;
+//                y -= 10;
+//                isAnimation = true;
+//                break;
+//            case SNOW_PEA:
+//                frameCount = 15;//11
+//                folderName += "snow pea/";
+//                delay = 100;//150
+//                //plantWidth -= 50;
+//                plantHeight += 20;
+//                //x += 25;
+//                //y += 10;
+//                isAnimation = true;
+//                break;
+//            case WALL_NUT:
+//                frameCount = 3;
+//                folderName += "wall nut/";
+//                plantWidth -= 20;
+//                plantHeight -= 20;
+//                x += 10;
+//                y += 20;
+//                isAnimation = false;
+//                nutState1 = 7;
+//                nutState2 = 4;
+//                break;
+//            case TALL_NUT:
+//                frameCount = 3;
+//                folderName += "tall nut/";
+//                plantWidth -= 10;
+//                x += 5;
+//                y += 5;
+//                isAnimation = false;
+//                nutState1 = 12;
+//                nutState2 = 6;
+//                break;
+//            case CHERRY_BOMB:
+//                frameCount = 13;
+//                folderName += "cherry/";
+//                delay = 100;//90 bood
+//                plantWidth -= 10;
+//                plantHeight -= 10;
+//                x += 10;
+//                y += 10;
+//                isAnimation = true;
+//                break;
+//            case JALAPENO:
+//                frameCount = 8;
+//                folderName += "jalapeno/";
+//                delay = 144;//90 bood
+//                plantWidth -= 20;
+//                plantHeight -= 20;
+//                x += 20;
+//                y += 20;
+//                isAnimation = true;
+//                break;
+//            case GRAVE_BUSTER:
+//                frameCount = 1;
+//                folderName += "night plants/";
+//                imageName = "grave buster.png";
+//                isAnimation = false;
+//                break;
+//            case COFFEE_BEAN:
+//
+//                break;
+//            case HYPNO_SHROOM:
+//
+//                break;
+//            case PUFF_SHROOM:
+//                frameCount = 1;
+//                folderName += "night plants/";
+//                imageName = "puff shroom.png";
+//                plantWidth -= 70;
+//                plantHeight -= 60;
+//                x += 35;
+//                y += 40;
+//                isAnimation = false;
+//                break;
+//            case SCAREDY_SHROOM:
+//
+//                break;
+//            case DOOM_SHROOM:
+//
+//                break;
+//            case ICE_SHROOM:
+//
+//                break;
+//            case LANTERN:
+//
+//                break;
+//            case FAN:
+//
+//                break;
+//        }
+
         if (plant.getClass() == Sunflower.class) {
             frameCount = 31;
             folderName += "sunflower/";
@@ -107,10 +224,16 @@ public class GraphicalPlant {
         }
 
 
-        frames = new Image[frameCount];
-        for (int i = 0; i < frameCount; i++) {
-            String path = getClass().getResource(folderName + i + ".png").toExternalForm();
-            frames[i] = new Image(path);
+            frames = new Image[frameCount];
+
+        if (isAnimation || plant instanceof NutPlant) {
+            for (int i = 0; i < frameCount; i++) {
+                String path = getClass().getResource(folderName + i + ".png").toExternalForm();
+                frames[i] = new Image(path);
+            }
+        }
+        else {
+            frames[0] = new Image(getClass().getResource(folderName + imageName).toExternalForm());
         }
 
         plantImage = new ImageView(frames[0]);

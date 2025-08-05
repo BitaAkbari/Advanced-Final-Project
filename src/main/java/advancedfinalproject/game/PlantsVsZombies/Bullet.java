@@ -2,7 +2,7 @@ package advancedfinalproject.game.PlantsVsZombies;
 
 public class Bullet {
 
-    public enum BulletType {NORMAL, FROZEN};
+    public enum BulletType {NORMAL, FROZEN, SHROOM_BULLET};
 
     private BulletType type;
     private int row, col;
