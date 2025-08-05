@@ -13,8 +13,8 @@ public class PeaPlant extends Plant {
     protected Timeline shootTimeline;
     protected final double DELAY = 1.5;
 
-    public PeaPlant(int row, int col) {
-        super(row, col);
+    public PeaPlant(PlantName name, int row, int col) {
+        super(name, row, col);
         type = Bullet.BulletType.NORMAL;
         hp = 4;
         bullets = new ArrayList<>();
@@ -28,8 +28,12 @@ public class PeaPlant extends Plant {
             }));
             shootTimeline.setCycleCount(Timeline.INDEFINITE);
         }
-        if (shootTimeline.getStatus() != Animation.Status.RUNNING)
+        if (shootTimeline.getStatus() != Animation.Status.RUNNING) {
+            Bullet bullet = new Bullet(type, getRow(), getCol());
+            bullets.add(bullet);
+
             shootTimeline.play();
+        }
     }
 
     public void stopAct() {
