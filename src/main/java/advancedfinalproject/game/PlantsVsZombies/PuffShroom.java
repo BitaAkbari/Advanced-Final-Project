@@ -15,9 +15,9 @@ public class PuffShroom extends Shroom {
     private final double DELAY = 1.5;
 
     public PuffShroom(int row, int col) {
-        super(row, col);
+        super(PlantName.PUFF_SHROOM, row, col);
         System.out.println("puff shroom");
-        type = Bullet.BulletType.SHROOM_BULLET;
+        type = Bullet.BulletType.PUFF_SHROOM_BULLET;
         bullets = new ArrayList<>();
     }
 
@@ -29,8 +29,13 @@ public class PuffShroom extends Shroom {
             }));
             shootTimeline.setCycleCount(Timeline.INDEFINITE);
         }
-        if (shootTimeline.getStatus() != Animation.Status.RUNNING)
+        if (shootTimeline.getStatus() != Animation.Status.RUNNING) {
+
+            Bullet bullet = new Bullet(type, getRow(), getCol());
+            bullets.add(bullet);
+
             shootTimeline.play();
+        }
     }
 
     public void stopAct() {

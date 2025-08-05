@@ -3,8 +3,8 @@ package advancedfinalproject.game.PlantsVsZombies;
 public abstract class Shroom extends Plant {
     protected boolean isSleeping;
 
-    public Shroom(int row, int col) {
-        super(row, col);
+    public Shroom(PlantName name, int row, int col) {
+        super(name, row, col);
         hp = 4;
         isSleeping = true;
     }
