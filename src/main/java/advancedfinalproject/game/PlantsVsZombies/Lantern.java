@@ -3,7 +3,7 @@ package advancedfinalproject.game.PlantsVsZombies;
 public class Lantern extends Plant {
 
     public Lantern(int row, int col) {
-        super(row, col);
+        super(PlantName.LANTERN, row, col);
         hp = 4;
     }
 

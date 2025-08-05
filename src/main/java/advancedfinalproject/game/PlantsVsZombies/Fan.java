@@ -2,7 +2,7 @@ package advancedfinalproject.game.PlantsVsZombies;
 
 public class Fan extends Plant {
     public Fan(int row, int col) {
-        super(row, col);
+        super(PlantName.FAN, row, col);
         hp = 4;
     }
 
