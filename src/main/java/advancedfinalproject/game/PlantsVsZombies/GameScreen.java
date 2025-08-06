@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Random;
+
 public class GameScreen {
     public static final int WIDTH = 1500;
     public static final int HEIGHT = 750;
@@ -87,6 +89,7 @@ public class GameScreen {
     Shovel shovel;
     private Stage gameStage;
     private Item.ItemName[] items;
+    private ImageView[][] graveImages;
 
 
     public void start(Stage gameStage, GameState.GameCode code, Item.ItemName[] selectedItems) {
@@ -110,6 +113,7 @@ public class GameScreen {
 
         addScreenImage(pane);
         drawGrid(pane);
+        if (gameCode == GameState.GameCode.NIGHT) drawGrave(pane);
         buildStore(pane);
         drawMenuBtn(pane);
 
@@ -141,6 +145,15 @@ public class GameScreen {
         shovel = new Shovel(pane);
 
         gameHandler = new GameHandler(pane, gameState, gameStage);
+
+        if(gameCode == GameState.GameCode.NIGHT) {
+            Timeline removeGraves = new Timeline(new KeyFrame(Duration.millis(150), e -> {
+                checkRemovedGraves(pane);
+            }));
+            removeGraves.setCycleCount(Timeline.INDEFINITE);
+            removeGraves.play();
+        }
+
 
 
         Scene screenScene = new Scene(pane, WIDTH, HEIGHT);
@@ -356,6 +369,51 @@ public class GameScreen {
             menuGameBtn.setFill(Color.TRANSPARENT);
         });
 
+    }
+
+    private void drawGrave(Pane pane){
+
+        graveImages = new ImageView[GameState.ROW_COUNT][GameState.COL_COUNT];
+
+        for (int i = 0 ; i < GameState.ROW_COUNT ; i++) {
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                graveImages[i][j] = null;
+            }
+        }
+
+        Random random = new Random();
+        Image graveImage ;
+        ImageView graveView ;
+        int index;
+        String folderName = "/Screen Images/Grave";
+        for (int i = 0 ; i < GameState.ROW_COUNT ; i++){
+            for (int j = 0 ; j < GameState.COL_COUNT ; j++) {
+                if (gameState.getField()[i][j].getCellContent() == Cell.Content.GRAVE) {
+                    index = random.nextInt(20) + 1;
+                    graveImage = new Image(getClass().getResource( folderName + "/Grave"+ index + ".png").toExternalForm());
+                    graveView = new ImageView(graveImage);
+                    int x = GRID_START_X + j * CELL_WIDTH + 20;
+                    int y = GRID_START_Y + i * CELL_HEIGHT + 20;
+                    graveView.setFitWidth(CELL_WIDTH - 40);
+                    graveView.setFitHeight(CELL_HEIGHT - 40);
+                    graveView.setLayoutX(x);
+                    graveView.setLayoutY(y);
+                    graveView.setMouseTransparent(true);
+                    pane.getChildren().add(graveView);
+                    graveImages[i][j] = graveView;
+                }
+            }
+        }
+    }
+
+    private void checkRemovedGraves(Pane pane) {
+        for (int i = 0 ; i < GameState.ROW_COUNT ; i++) {
+            for (int j = 0 ; j < GameState.COL_COUNT ; j++) {
+                if (graveImages[i][j] != null && gameState.getField()[i][j].getCellContent() != Cell.Content.GRAVE) {
+                    pane.getChildren().remove(graveImages[i][j]);
+                }
+            }
+        }
     }
 
     public static void setTimerLabel(String newTime) {

@@ -37,11 +37,11 @@ public class GraphicalZombie {
                 folderName = "/simple zombie/";
                 break;
             case CONEHEAD_ZOMBIE:
-                frameCount = 21;
+                frameCount = 7;
                 folderName = "/conehead zombie/";
                 break;
             case SCREEN_DOOR_ZOMBIE:
-                frameCount = 21;
+                frameCount = 7;
                 folderName = "/screen door zombie/";
                 break;
             case IMP_ZOMBIE:

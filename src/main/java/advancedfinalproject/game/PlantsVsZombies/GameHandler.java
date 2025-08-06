@@ -300,6 +300,7 @@ public class GameHandler {
         zombieHandler.getGraphicalZombies().removeAll(deadZombies);
     }
 
+
     private boolean checkLose() {
         for (GraphicalZombie graphicalZombie: zombieHandler.getGraphicalZombies()) {
             if (graphicalZombie.getZombie().getCenterX() < GameScreen.GRID_START_X) {

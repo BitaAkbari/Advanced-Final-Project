@@ -16,7 +16,15 @@ public class Cell {
     }
 
     public boolean placePlant(Plant plant) {
-        if (cellContent == Content.BLANK) {
+        if (plant.getClass() == GraveBuster.class) {
+            if(cellContent == Content.GRAVE) {
+                this.plant = plant;
+                cellContent = Content.PLANT;
+                plant.act();
+                return true;
+            }
+        }
+        else if (cellContent == Content.BLANK) {
             this.plant = plant;
             cellContent = Content.PLANT;
             if (plant instanceof BombPlant || plant instanceof Sunflower)
@@ -38,6 +46,10 @@ public class Cell {
 
     public Content getCellContent() {
         return cellContent;
+    }
+
+    public void setCellContent(Content content) {
+        cellContent = content;
     }
 
     public Plant getPlant() {

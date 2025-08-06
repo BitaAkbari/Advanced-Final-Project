@@ -1,6 +1,7 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameState {
     public static final int ROW_COUNT = 5;
@@ -37,6 +38,8 @@ public class GameState {
         zombieList = new ArrayList<Zombie>();
         sunList = new ArrayList<Sun>();
         bulletList = new ArrayList<Bullet>();
+
+        if (code == GameCode.NIGHT) buildGrave();
 
         selectedItem = null;
         //selectedCell = null;
@@ -91,6 +94,19 @@ public class GameState {
         lastChoice = index;
     }
 
+    private void buildGrave() {
+        Random random = new Random();
+        int graveCount = random.nextInt(3) + 3;
+        for(int i = 0 ; i < graveCount ; i++) {
+            int row = random.nextInt(5);
+            int col = random.nextInt(4) + 4;
+            if(field[row][col].getCellContent() == Cell.Content.BLANK) {
+                field[row][col].setCellContent(Cell.Content.GRAVE);
+            }
+            else i--;
+        }
+    }
+
     public boolean selectItem(int index) {
         if (selectedItem == store[index]) {
             selectedItem = null;
@@ -134,7 +150,7 @@ public class GameState {
             case JALAPENO:
                 return new Jalapeno(this, row, col);
             case GRAVE_BUSTER:
-                return new GraveBuster(row, col);
+                return new GraveBuster(this, row, col);
             case COFFEE_BEAN:
                 return new CoffeeBean(row, col);
             case HYPNO_SHROOM:
