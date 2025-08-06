@@ -16,7 +16,6 @@ public class PuffShroom extends Shroom {
 
     public PuffShroom(int row, int col) {
         super(PlantName.PUFF_SHROOM, row, col);
-        System.out.println("puff shroom");
         type = Bullet.BulletType.PUFF_SHROOM_BULLET;
         bullets = new ArrayList<>();
     }

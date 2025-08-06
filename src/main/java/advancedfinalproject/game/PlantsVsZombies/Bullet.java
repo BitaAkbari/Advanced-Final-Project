@@ -21,6 +21,10 @@ public class Bullet {
             horizontalDiff = 85;
             verticalDiff = 70;
         }
+        else if (type == BulletType.SCARDY_SHROOM_BULLET) {
+            horizontalDiff = 85;
+            verticalDiff = 60;
+        }
         else {
             horizontalDiff = 90;
             verticalDiff = 30;

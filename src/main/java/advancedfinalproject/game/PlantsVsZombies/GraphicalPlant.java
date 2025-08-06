@@ -137,6 +137,10 @@ public class GraphicalPlant {
                 frameCount = 1;
                 folderName += "night plants/";
                 imageName = "scaredy shroom.png";
+                plantWidth -= 50;
+                plantHeight -= 30;
+                x += 20;
+                y += 25;
                 isAnimation = false;
                 break;
             case DOOM_SHROOM:

@@ -30,6 +30,12 @@ public class ZombieHandler {
 
     public void sendZombie() {
 
+        //------------test----------------
+//        buildZombie(Zombie.ZombieType.ZOMBIE, 0);
+//        buildZombie(Zombie.ZombieType.CONEHEAD_ZOMBIE, 1);
+//        buildZombie(Zombie.ZombieType.SCREEN_DOOR_ZOMBIE, 3);
+        //------------test----------------
+
 
         level1 = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
             int row = randomRow();

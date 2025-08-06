@@ -152,6 +152,20 @@ public class GameHandler {
         return false;
     }
 
+    private boolean isZombieAround(int row, int col) {
+        ArrayList<GraphicalZombie> zombies = zombieHandler.getGraphicalZombies();
+        int zombieRow, zombieCol;
+        for (GraphicalZombie zombie: zombies) {
+            zombieRow = zombie.getZombie().getRow();
+            zombieCol = zombie.getZombie().getCol();
+
+            if (Math.abs(zombieRow - row) <= 1 &&
+                    Math.abs(zombieCol - col) <= 1)
+                return true;
+        }
+        return false;
+    }
+
     private void shoot() {
         for (int i = 0; i < GameState.ROW_COUNT; i++)
             for (int j = 0; j < GameState.COL_COUNT; j++) {
@@ -190,9 +204,30 @@ public class GameHandler {
                                     //pane.getChildren().add(gb.getDot());///////////
                                 }
                                 ((PuffShroom) plant).getBullets().clear();
-                            } else
+                            }
+                            else
                                 ((PuffShroom) plant).stopAct();
                         }
+                        else if (plant.getClass() == ScaredyShroom.class) {
+                            if (isZombieComing(i, j) && !isZombieAround(i, j)) {
+
+                                plant.act();
+
+                                ArrayList<Bullet> bullets = ((ScaredyShroom) plant).getBullets();
+                                for (Bullet b : bullets) {
+                                    gameState.getBulletList().add(b);
+                                    GraphicalBullet gb = new GraphicalBullet(b);
+                                    graphicalBullets.add(gb);
+                                    pane.getChildren().add(gb.getBulletImage());
+                                    //pane.getChildren().add(gb.getDot());///////////
+                                }
+                                ((ScaredyShroom) plant).getBullets().clear();
+                            }
+                            else
+                                ((ScaredyShroom) plant).stopAct();
+                        }
+
+
                     }
                 }
             }
@@ -205,7 +240,7 @@ public class GameHandler {
             for (GraphicalZombie gz : zombieHandler.getGraphicalZombies()) {
                 if (!sw && gb.getBullet().getRow() == gz.getZombie().getRow()
                         && gb.getBullet().getCol() <= gz.getZombie().getCol()) {
-                    if (Math.abs(gb.getBullet().getCenterX() - gz.getZombie().getCenterX()) <= 30) {
+                    if (Math.abs(gb.getBullet().getCenterX() - gz.getZombie().getCenterX()) <= 40) {
                         gz.getZombie().reduceHp();
                         if (gb.getBullet().getType() == Bullet.BulletType.FROZEN) {
                             gz.getZombie().slowDown();
@@ -273,22 +308,25 @@ public class GameHandler {
                 Rectangle darkOverlay = new Rectangle(0, 0, pane.getWidth(), pane.getHeight());
                 darkOverlay.setFill(Color.BLACK);
                 darkOverlay.setOpacity(0.6);
-                pane.getChildren().add(darkOverlay);
+//                pane.getChildren().add(darkOverlay);
 
                 Image loseMessageImage = new Image(getClass().getResource("/buttons/lose message.png").toExternalForm());
                 ImageView loseMessageView = new ImageView(loseMessageImage);
-                Timeline gameOver = new Timeline(new KeyFrame(Duration.millis(0), ev -> {
-                    loseMessageView.setFitWidth(1400);
-                    loseMessageView.setFitHeight(650);
-                    loseMessageView.setLayoutX(50);
-                    loseMessageView.setLayoutY(50);
+                loseMessageView.setFitWidth(1400);
+                loseMessageView.setFitHeight(650);
+                loseMessageView.setLayoutX(50);
+                loseMessageView.setLayoutY(50);
 
+                Timeline gameOver = new Timeline(new KeyFrame(Duration.millis(0), ev -> {
+
+                    pane.getChildren().add(darkOverlay);
                     pane.getChildren().add(loseMessageView);
                 }),
-                new KeyFrame(Duration.seconds(3), ev -> {
+//                new KeyFrame(Duration.seconds(1.5), ev -> {
+//                    pane.getChildren().remove(loseMessageView);
+//                }),
+                new KeyFrame(Duration.seconds(1), ev -> {
                     pane.getChildren().remove(loseMessageView);
-                }),
-                new KeyFrame(Duration.seconds(3.5), ev -> {
                     Image gameOverImage = new Image(getClass().getResource("/buttons/Game Over.png").toExternalForm());
                     ImageView gameOverView= new ImageView(gameOverImage);
                     gameOverView.setFitWidth(600);
@@ -367,6 +405,12 @@ public class GameHandler {
             if (node.getUserData() instanceof GraphicalSun gs) {
                 gs.getSunImage().setMouseTransparent(true);
                 gs.stop();
+            }
+        }
+
+        for (Node node : pane.getChildren()) {
+            if (node.getUserData() instanceof GraphicalZombie gz) {
+                gz.stop();
             }
         }
 
