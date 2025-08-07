@@ -17,10 +17,15 @@ public class Cell {
 
     public boolean placePlant(Plant plant) {
         if (plant.getClass() == GraveBuster.class) {
-            if(cellContent == Content.GRAVE) {
+            if (cellContent == Content.GRAVE) {
                 this.plant = plant;
                 cellContent = Content.PLANT;
                 plant.act();
+                return true;
+            }
+        }
+        else if (plant.getClass() == CoffeeBean.class) {
+            if (cellContent == Content.PLANT && this.plant instanceof Shroom && ((Shroom) this.plant).isSleeping()) {
                 return true;
             }
         }
