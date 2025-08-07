@@ -93,7 +93,8 @@ public class GraphicalZombie {
         timeline.pause();
     }
     public void start() {
-        timeline.play();
+        if (timeline.getStatus() != Timeline.Status.RUNNING)
+            timeline.play();
     }
 
     private double xToCenterX() {

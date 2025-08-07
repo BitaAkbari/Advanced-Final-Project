@@ -115,7 +115,13 @@ public class GraphicalPlant {
                 isAnimation = false;
                 break;
             case COFFEE_BEAN:
-
+                frameCount = 17;
+                folderName += "coffee bean/";
+                delay = 100;
+                plantWidth -= 60;
+                plantHeight -= 20;
+                x += 25;
+                isAnimation = true;
                 break;
             case HYPNO_SHROOM:
                 frameCount = 1;
