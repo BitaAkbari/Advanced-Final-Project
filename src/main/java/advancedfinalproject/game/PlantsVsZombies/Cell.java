@@ -1,8 +1,12 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+
 public class Cell {
 
-    public enum Content { BLANK, GRAVE, PLANT};
+    public enum Content { BLANK, GRAVE, PLANT, BLOCKED};
 
     private Content cellContent;
     private Plant plant;
@@ -46,6 +50,10 @@ public class Cell {
             cellContent = Content.BLANK;
             return true;
         }
+        if (cellContent == Content.BLOCKED) {
+            plant.clear();
+            plant = null;
+        }
         return false;
     }
 
@@ -59,6 +67,14 @@ public class Cell {
 
     public Plant getPlant() {
         return plant;
+    }
+
+    public void unblock() {
+        Timeline unblock = new Timeline(new KeyFrame(Duration.seconds(10), e -> {
+            cellContent = Content.BLANK;
+        }));
+        unblock.setCycleCount(1);
+        unblock.play();
     }
 
 }

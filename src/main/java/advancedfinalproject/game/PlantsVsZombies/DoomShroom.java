@@ -1,12 +1,32 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
-public class DoomShroom extends Shroom {
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
-    public DoomShroom(int row, int col) {
+public class DoomShroom extends Shroom {
+    private GameState gameState;
+
+    public DoomShroom(GameState gameState, int row, int col) {
         super(PlantName.DOOM_SHROOM, row, col);
+        this.gameState = gameState;
     }
 
     public void act() {
+        Timeline explode = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            for (Zombie zombie: gameState.getZombieList()) {
+                if (Math.abs(zombie.getRow() - getRow()) <= 2 &&
+                        Math.abs(zombie.getCol() - getCol()) <= 2 &&
+                        zombie.getCenterX() >= GameScreen.GRID_START_X) {
+                    zombie.burst();
+                }
+            }
+            hp = 0;
+            gameState.getField()[getRow()][getCol()].setCellContent(Cell.Content.BLOCKED);
+            gameState.getField()[getRow()][getCol()].unblock();
+        }));
+        explode.setCycleCount(1);
+        explode.play();
 
     }
 }
