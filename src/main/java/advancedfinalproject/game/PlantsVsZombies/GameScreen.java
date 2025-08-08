@@ -266,7 +266,7 @@ public class GameScreen {
                 }
                 else {
                     store[index].setStroke(Color.BLACK);
-                    gameState.setLastChoice(-1);
+//                    //gameState.setLastChoice(-1);//---------------- bug-------------------
                 }
             });
         }
