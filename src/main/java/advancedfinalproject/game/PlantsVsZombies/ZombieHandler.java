@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ZombieHandler {
-    private ArrayList<GraphicalZombie> graphicalZombies;
+    private static ArrayList<GraphicalZombie> graphicalZombies;
     private Pane pane;
     private GameState gameState;
     private long seed;
@@ -37,7 +37,7 @@ public class ZombieHandler {
         //------------test----------------
 
 
-        level1 = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
+        level1 = new Timeline(new KeyFrame(Duration.seconds(/*3*/6), event -> {
             int row = randomRow();
             buildZombie(Zombie.ZombieType.ZOMBIE, row);
         }));
@@ -45,10 +45,10 @@ public class ZombieHandler {
         level1.play();
 
         int[] level = {2};
-        otherLevels = new Timeline(new KeyFrame(Duration.seconds(15), e -> { // 15,30,45
+        otherLevels = new Timeline(new KeyFrame(Duration.seconds(/*15*/30), e -> { // 30,60,90
             int optionCount = level[0];
 
-            first = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+            first = new Timeline(new KeyFrame(Duration.seconds(/*1*/2), ev -> {
                 Zombie.ZombieType type = randomType(optionCount);
                 int row = randomRow();
                 buildZombie(type, row);
@@ -66,7 +66,7 @@ public class ZombieHandler {
             first.setCycleCount(1);
             first.play();
 
-            second = new Timeline(new KeyFrame(Duration.seconds(2), ev -> {
+            second = new Timeline(new KeyFrame(Duration.seconds(/*2*/4), ev -> {
                 Zombie.ZombieType type = randomType(optionCount);
                 int row = randomRow();
                 buildZombie(type, row);
@@ -83,7 +83,7 @@ public class ZombieHandler {
 
             }));
             second.setCycleCount(7);
-            second.setDelay(Duration.seconds(1));
+            second.setDelay(Duration.seconds(/*1*/2));
             second.play();
 
             level[0] ++;
@@ -92,7 +92,7 @@ public class ZombieHandler {
         otherLevels.play();
 
 
-        midAttack = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+        midAttack = new Timeline(new KeyFrame(Duration.seconds(/*1*/2), e -> {
             for (int i = 0; i < GameState.ROW_COUNT; i++) {
                 final int row = i;
                 //Timeline delay = new Timeline(new KeyFrame(Duration.millis(200), event -> {
@@ -104,8 +104,8 @@ public class ZombieHandler {
 
             }
         }));
-        midAttack.setCycleCount(/*7*/3);
-        midAttack.setDelay(Duration.seconds(25));
+        midAttack.setCycleCount(/*7*/4);
+        midAttack.setDelay(Duration.seconds(/*25*/55));
         midAttack.play();
 
         finalAttack = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
@@ -119,8 +119,8 @@ public class ZombieHandler {
                 //delay.play();
             }
         }));
-        finalAttack.setCycleCount(/*13*/5);
-        finalAttack.setDelay(Duration.seconds(46));
+        finalAttack.setCycleCount(/*13*/10);
+        finalAttack.setDelay(Duration.seconds(/*46*/109));
         finalAttack.play();
     }
 
@@ -146,7 +146,7 @@ public class ZombieHandler {
         pane.getChildren().add(graphicalZombie.getDot());
     }
 
-    public ArrayList<GraphicalZombie> getGraphicalZombies() {
+    public static ArrayList<GraphicalZombie> getGraphicalZombies() {
         return graphicalZombies;
     }
 
