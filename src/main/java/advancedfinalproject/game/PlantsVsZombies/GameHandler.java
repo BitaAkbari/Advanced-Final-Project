@@ -21,10 +21,12 @@ public class GameHandler {
     private PlantHandler plantHandler;
     private ArrayList<GraphicalBullet> graphicalBullets;
     private static ArrayList<GraphicalSun> graphicalSuns;
+    private ImageView[][] blockedImages;
     private static Pane pane;
     private Timeline timer, checkLoop, sunGenerator;
     private Timeline eating;
     private Stage stage;
+    private static boolean isGameStopped;
 
 
 
@@ -32,10 +34,16 @@ public class GameHandler {
         this.stage = stage;
         this.pane = pane;
         gameState = state;
+        isGameStopped = false;
         zombieHandler = new ZombieHandler(pane, gameState);
         plantHandler = new PlantHandler(pane, gameState);
         graphicalBullets = new ArrayList<>();
         graphicalSuns = new ArrayList<>();
+
+        blockedImages = new ImageView[GameState.ROW_COUNT][GameState.COL_COUNT];
+        for (int i = 0; i < GameState.ROW_COUNT; i++)
+            for (int j = 0; j < GameState.COL_COUNT; j++)
+                blockedImages[i][j] = null;
 
         timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             gameState.setSeconds();
@@ -59,8 +67,13 @@ public class GameHandler {
             checkBulletHit();
             checkDeadPlants();
             checkDeadZombies();
+            checkPlantAct();
             checkExpiredSuns();
-            checkLose();
+            if (checkLose()) {
+                showLoseTab();
+                stopAllTimelines();
+            }
+            checkBlockedCells();
         }));
         checkLoop.setCycleCount(Timeline.INDEFINITE);
         checkLoop.play();
@@ -96,6 +109,7 @@ public class GameHandler {
     }
 
     public static void handleSun(Sun sun) {
+        if (isGameStopped) return;
         gameState.getSunList().add(sun);
         GraphicalSun graphicalSun = new GraphicalSun(sun);
         graphicalSuns.add(graphicalSun);
@@ -266,6 +280,18 @@ public class GameHandler {
         graphicalBullets.removeAll(expiredBullets);
     }
 
+    private void checkPlantAct() {
+        for (int i = 0; i < GameState.ROW_COUNT; i++)
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                Plant plant = gameState.getField()[i][j].getPlant();
+                if (plant instanceof Shroom &&
+                (gameState.getCode() == GameState.GameCode.NIGHT || !((Shroom) plant).isSleeping())) {
+                    if (plant instanceof IceShroom || plant instanceof DoomShroom)
+                        plant.act();
+                }
+            }
+    }
+
     private void checkExpiredSuns() {
         ArrayList<GraphicalSun> expiredSuns = new ArrayList<>();
         for (GraphicalSun graphicalSun: graphicalSuns) {
@@ -281,11 +307,20 @@ public class GameHandler {
 
     private void checkDeadPlants() {
         for (int i = 0; i < GameState.ROW_COUNT; i++)
-            for (int j = 0; j < GameState.COL_COUNT; j++)
-                if (gameState.getField()[i][j].getPlant() != null && gameState.getField()[i][j].getPlant().getHp() <= 0) {
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+
+                Plant plant = gameState.getField()[i][j].getPlant();
+                if (plant != null && plant.getHp() <= 0) {
                     gameState.getField()[i][j].removePlant();
                     plantHandler.deletePlant(i, j);
                 }
+
+                plant = gameState.getCoffeeBeanList()[i][j];
+                if (plant != null && plant.getHp() <= 0) {
+                    gameState.getCoffeeBeanList()[i][j] = null;
+                    plantHandler.clearCoffeeBean(i, j);
+                }
+            }
     }
 
     private void checkDeadZombies() {
@@ -304,84 +339,20 @@ public class GameHandler {
     private boolean checkLose() {
         for (GraphicalZombie graphicalZombie: zombieHandler.getGraphicalZombies()) {
             if (graphicalZombie.getZombie().getCenterX() < GameScreen.GRID_START_X) {
-                stopAllTimelines();
-
-                Rectangle darkOverlay = new Rectangle(0, 0, pane.getWidth(), pane.getHeight());
-                darkOverlay.setFill(Color.BLACK);
-                darkOverlay.setOpacity(0.6);
-//                pane.getChildren().add(darkOverlay);
-
-                Image loseMessageImage = new Image(getClass().getResource("/buttons/lose message.png").toExternalForm());
-                ImageView loseMessageView = new ImageView(loseMessageImage);
-                loseMessageView.setFitWidth(1400);
-                loseMessageView.setFitHeight(650);
-                loseMessageView.setLayoutX(50);
-                loseMessageView.setLayoutY(50);
-
-                Timeline gameOver = new Timeline(new KeyFrame(Duration.millis(0), ev -> {
-
-                    pane.getChildren().add(darkOverlay);
-                    pane.getChildren().add(loseMessageView);
-                }),
-//                new KeyFrame(Duration.seconds(1.5), ev -> {
-//                    pane.getChildren().remove(loseMessageView);
-//                }),
-                new KeyFrame(Duration.seconds(1), ev -> {
-                    pane.getChildren().remove(loseMessageView);
-                    Image gameOverImage = new Image(getClass().getResource("/buttons/Game Over.png").toExternalForm());
-                    ImageView gameOverView= new ImageView(gameOverImage);
-                    gameOverView.setFitWidth(600);
-                    gameOverView.setFitHeight(400);
-                    gameOverView.setLayoutX(450);
-                    gameOverView.setLayoutY(175);
-
-                    Rectangle tryAgainBtn = new Rectangle(510 , 485 , 225 , 60);
-                    tryAgainBtn.setStroke(Color.BLACK);
-                    tryAgainBtn.setFill(Color.TRANSPARENT);
-                    tryAgainBtn.setOnMouseClicked(event -> {
-                        new ItemSelectionScreen(stage, gameState.getCode());
-                    });
-                    tryAgainBtn.setOnMouseEntered(event -> {
-                        tryAgainBtn.setFill(Color.rgb(200, 200, 200, 0.1));
-                    });
-                    tryAgainBtn.setOnMouseExited(event -> {
-                        tryAgainBtn.setFill(Color.TRANSPARENT);
-                    });
-
-                    Rectangle mainMenuBtn = new Rectangle(760 ,485  , 225 , 60);
-                    mainMenuBtn.setStroke(Color.BLACK);
-                    mainMenuBtn.setFill(Color.TRANSPARENT);
-                    mainMenuBtn.setOnMouseClicked(event -> {
-                        new Menu(stage);
-                    });
-                    mainMenuBtn.setOnMouseEntered(event -> {
-                        mainMenuBtn.setFill(Color.rgb(200, 200, 200, 0.1));
-                    });
-                    mainMenuBtn.setOnMouseExited(event -> {
-                        mainMenuBtn.setFill(Color.TRANSPARENT);
-                    });
-
-                    pane.getChildren().addAll(gameOverView, tryAgainBtn, mainMenuBtn);
-
-
-
-                }));
-
-
-                gameOver.setCycleCount(1);
-                gameOver.setDelay(Duration.seconds(1));
-                gameOver.play();
-
+                //stopAllTimelines();
+                return true;
             }
-            return true;
         }
         return false;
     }
 
     public void stopAllTimelines() {
+        isGameStopped = true;
         timer.stop();
-        if (sunGenerator != null)
+        if (sunGenerator != null) {
             sunGenerator.stop();
+            sunGenerator.getKeyFrames().clear();
+        }
         checkLoop.stop();
         eating.stop();
         zombieHandler.clear();
@@ -416,4 +387,115 @@ public class GameHandler {
         }
 
     }
+
+    private void showLoseTab() {
+        Rectangle darkOverlay = new Rectangle(0, 0, pane.getWidth(), pane.getHeight());
+        darkOverlay.setFill(Color.BLACK);
+        darkOverlay.setOpacity(0.6);
+
+        Image loseMessageImage = new Image(getClass().getResource("/buttons/lose message.png").toExternalForm());
+        ImageView loseMessageView = new ImageView(loseMessageImage);
+        loseMessageView.setFitWidth(1400);
+        loseMessageView.setFitHeight(650);
+        loseMessageView.setLayoutX(50);
+        loseMessageView.setLayoutY(50);
+
+        Timeline gameOver = new Timeline(new KeyFrame(Duration.millis(1), ev -> {
+
+            pane.getChildren().add(darkOverlay);
+            pane.getChildren().add(loseMessageView);
+        }),
+//                new KeyFrame(Duration.seconds(1.5), ev -> {
+//                    pane.getChildren().remove(loseMessageView);
+//                }),
+                new KeyFrame(Duration.seconds(1), ev -> {
+                    pane.getChildren().remove(loseMessageView);
+                    Image gameOverImage = new Image(getClass().getResource("/buttons/Game Over.png").toExternalForm());
+                    ImageView gameOverView= new ImageView(gameOverImage);
+                    gameOverView.setFitWidth(600);
+                    gameOverView.setFitHeight(400);
+                    gameOverView.setLayoutX(450);
+                    gameOverView.setLayoutY(175);
+
+                    Rectangle tryAgainBtn = new Rectangle(510 , 485 , 225 , 60);
+                    tryAgainBtn.setStroke(Color.BLACK);
+                    tryAgainBtn.setFill(Color.TRANSPARENT);
+                    tryAgainBtn.setOnMouseClicked(event -> {
+                        //clear();
+                        ItemSelectionScreen itemSelection = new ItemSelectionScreen(stage, gameState.getCode());
+                    });
+                    tryAgainBtn.setOnMouseEntered(event -> {
+                        tryAgainBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+                    });
+                    tryAgainBtn.setOnMouseExited(event -> {
+                        tryAgainBtn.setFill(Color.TRANSPARENT);
+                    });
+
+                    Rectangle mainMenuBtn = new Rectangle(760 ,485  , 225 , 60);
+                    mainMenuBtn.setStroke(Color.BLACK);
+                    mainMenuBtn.setFill(Color.TRANSPARENT);
+                    mainMenuBtn.setOnMouseClicked(event -> {
+                        Menu menu = new Menu(stage);
+                    });
+                    mainMenuBtn.setOnMouseEntered(event -> {
+                        mainMenuBtn.setFill(Color.rgb(200, 200, 200, 0.1));
+                    });
+                    mainMenuBtn.setOnMouseExited(event -> {
+                        mainMenuBtn.setFill(Color.TRANSPARENT);
+                    });
+
+                    pane.getChildren().addAll(gameOverView, tryAgainBtn, mainMenuBtn);
+
+
+
+                }));
+
+
+        gameOver.setCycleCount(1);
+        //gameOver.setDelay(Duration.seconds(1));
+        gameOver.play();
+    }
+
+
+    private void checkBlockedCells() {
+        for (int i = 0; i < GameState.ROW_COUNT; i++)
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                if (gameState.getField()[i][j].getCellContent() == Cell.Content.BLOCKED &&
+                blockedImages[i][j] == null) {
+                    Image image = new Image(getClass().getResource("/plants/doom shroom effect.png").toExternalForm());
+                    blockedImages[i][j] = new ImageView(image);
+                    blockedImages[i][j].setFitWidth(GameScreen.CELL_WIDTH);
+                    blockedImages[i][j].setFitHeight(GameScreen.CELL_HEIGHT);
+                    double x = GameScreen.GRID_START_X + j * GameScreen.CELL_WIDTH;
+                    double y = GameScreen.GRID_START_Y + i * GameScreen.CELL_HEIGHT;
+                    blockedImages[i][j].setLayoutX(x);
+                    blockedImages[i][j].setLayoutY(y);
+
+                    pane.getChildren().add(blockedImages[i][j]);
+                }
+                if (gameState.getField()[i][j].getCellContent() != Cell.Content.BLOCKED &&
+                blockedImages[i][j] != null) {
+                    pane.getChildren().remove(blockedImages[i][j]);
+                    blockedImages[i][j] = null;
+                }
+            }
+    }
+
+//    private void clear() {
+//        //stopAllTimelines();
+//
+//        graphicalBullets.clear();
+//        graphicalSuns.clear();
+//        gameState.getSunList().clear();
+//        gameState.getZombieList().clear();
+//        gameState.getBulletList().clear();
+//        gameState.clearField();
+//        plantHandler.clearGraphicalPlants();
+//
+//        pane.getChildren().clear();
+//
+//        zombieHandler = new ZombieHandler(pane, gameState);
+//        plantHandler = new PlantHandler(pane, gameState);
+//
+//    }
 }
