@@ -57,5 +57,6 @@ public class GraphicalSun {
 
     public void stop() {
         move.stop();
+        //move.getKeyFrames().clear();
     }
 }
