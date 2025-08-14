@@ -6,22 +6,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class Menu {
-    public static final int WIDTH = 1500;
-    public static final int HEIGHT = 750;
+
+    public static final int WIDTH = GameScreen.WIDTH;
+    public static final int HEIGHT = GameScreen.HEIGHT;
+
     private Stage menuStage;
     private Pane pane;
     private Circle dayGameBtn, nightGameBtn;
-    //private ImageView dayImage, nightImage;
     private int btnWidth = 340;
     private int btnHeight = 340;
-    private int btnStartX = 400;
-    private int btnStartY = 450;
+    private int btnCenterX = 400;
+    private int btnCenterY = 450;
     private int btnRadius = 170;
-    //private int verticalSpace = 10;
+    private int horizontalSpace = 630;
 
     public Menu(Stage stage) {
 
@@ -36,31 +36,34 @@ public class Menu {
         menuStage.setTitle("Menu");
         menuStage.setResizable(false); //size stage ro fix mikone
 
-        Scene screenScene = new Scene(pane, WIDTH, HEIGHT);
-        menuStage.setScene(screenScene);
-        menuStage.centerOnScreen();
+        Scene menuScene = new Scene(pane, WIDTH, HEIGHT);
+        menuStage.setScene(menuScene);
+        menuStage.centerOnScreen(); //stage ro vasate safhe gharar mide
         menuStage.show();
     }
 
     private void setScreen() {
-        Image screen = new Image(getClass().getResource("/Screen Images/menu background3.jpg").toExternalForm());
+        Image screen = new Image(getClass().getResource("/Screen Images/menu background.jpg").toExternalForm());
         ImageView screenImage = new ImageView(screen);
+
+        //baraye tanzime aks ba panjere ye asli
         screenImage.fitWidthProperty().bind(pane.widthProperty());
         screenImage.fitHeightProperty().bind(pane.heightProperty());
+
         pane.getChildren().add(screenImage);
     }
 
     private void drawDayBtn() {
-        dayGameBtn = new Circle(btnStartX, btnStartY, btnRadius);
+        dayGameBtn = new Circle(btnCenterX, btnCenterY, btnRadius);
         dayGameBtn.setStroke(Color.BLACK);
         dayGameBtn.setFill(Color.TRANSPARENT);
 
-        Image day = new Image(getClass().getResource("/buttons/day2.png").toExternalForm());
+        Image day = new Image(getClass().getResource("/buttons/dayBtn.png").toExternalForm());
         ImageView dayImage = new ImageView(day);
         dayImage.setFitWidth(btnWidth);
         dayImage.setFitHeight(btnHeight);
-        dayImage.setLayoutX(btnStartX - btnRadius);
-        dayImage.setLayoutY(btnStartY - btnRadius);
+        dayImage.setLayoutX(btnCenterX - btnRadius);
+        dayImage.setLayoutY(btnCenterY - btnRadius);
 
         pane.getChildren().add(dayImage);
         pane.getChildren().add(dayGameBtn);
@@ -77,16 +80,17 @@ public class Menu {
     }
 
     private void drawNightBtn() {
-        nightGameBtn = new Circle(btnStartX + 630, btnStartY, btnRadius);
+
+        nightGameBtn = new Circle(btnCenterX + horizontalSpace, btnCenterY, btnRadius);
         nightGameBtn.setStroke(Color.BLACK);
         nightGameBtn.setFill(Color.TRANSPARENT);
 
-        Image night = new Image(getClass().getResource("/buttons/night2.png").toExternalForm());
+        Image night = new Image(getClass().getResource("/buttons/nightBtn.png").toExternalForm());
         ImageView nightImage = new ImageView(night);
         nightImage.setFitWidth(btnWidth);
         nightImage.setFitHeight(btnHeight);
-        nightImage.setLayoutX(btnStartX - btnRadius + 630);
-        nightImage.setLayoutY(btnStartY - btnRadius);
+        nightImage.setLayoutX(btnCenterX - btnRadius + horizontalSpace);
+        nightImage.setLayoutY(btnCenterY - btnRadius);
 
         pane.getChildren().add(nightImage);
         pane.getChildren().add(nightGameBtn);
