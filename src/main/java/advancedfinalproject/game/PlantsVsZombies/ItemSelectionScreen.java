@@ -16,79 +16,51 @@ public class ItemSelectionScreen {
     private final int WIDTH = GameScreen.WIDTH;
     private final int HEIGHT = GameScreen.HEIGHT;
     private final int TOTAL_ITEM_COUNT = 17;
+    private final int RECT_COUNT = TOTAL_ITEM_COUNT + 3;
     public static final int SELECTED_COUNT = 6;
 
     private GameState.GameCode code;
-    private Item.ItemName[] itemList; // liste hameye giyahane mojood
+    private Plant.PlantName[] itemList; // liste hameye giyahane mojood
     private boolean[] isSelected; // motanazer ba liste hameye giyahan
-    private ArrayList<Item.ItemName> selectedItems; // liste entekhab haye karbar - 6 onsor
+    private ArrayList<Plant.PlantName> selectedItems; // liste entekhab haye karbar - 6 onsor
     private Rectangle[] list; // mostatil haye liste giyahan
     private Rectangle[] selectedRects; // mostatil haye entekhabe karbar
     private ImageView[] selectedImages; // araye ye aks haye entekhab shode ha
     private Rectangle playBtn;
     private Pane pane;
+    private Stage stage;
 
     // andaze haye marboot be selection background
     private int selectionBgWidth;
     private int selectionBgHeight;
     private double selectionBgStartX;
     private double selectionBgStartY;
-    private Stage stage;
 
     public ItemSelectionScreen(Stage stage, GameState.GameCode code) {
 
+        this.stage = stage;
         this.code = code;
 
-        this.stage = stage;
-        itemList = Item.ItemName.values();
+        itemList = Plant.PlantName.values();
         isSelected = new boolean[TOTAL_ITEM_COUNT];
         for (int i = 0; i < TOTAL_ITEM_COUNT; i++)
             isSelected[i] = false;
-        selectedItems = new ArrayList<Item.ItemName>();
-        list = new Rectangle[20];
+        selectedItems = new ArrayList<Plant.PlantName>();
+        list = new Rectangle[RECT_COUNT];
         selectedRects = new Rectangle[SELECTED_COUNT];
         selectedImages = new ImageView[SELECTED_COUNT];
 
         pane = new Pane();
-
-        stage.setResizable(false); //size stage ro fix mikone
 
         setBackground();
         drawItemList();
         loadSelectedItems();
         drawSelectedRects();
         drawPlayBtn();
-        drawMenu();
-
-        for (int i = 0; i < TOTAL_ITEM_COUNT; i++) {
-            final int index = i;
-            list[i].setOnMouseClicked(e -> {
-                if (selectedItems.size() < SELECTED_COUNT && !isSelected[index]) {
-                    selectedItems.add(itemList[index]);
-                    isSelected[index] = true;
-                    //System.out.println(index);
-                    //removeSelectedItems();
-                    loadSelectedItems();
-                    drawSelectedRects();
-                }
-
-            });
-        }
-
-        playBtn.setOnMouseClicked(e -> {
-            if (selectedItems.size() == SELECTED_COUNT) {
-                // tabdile arraylist be araye
-                Item.ItemName[] items = new Item.ItemName[SELECTED_COUNT];
-                for (int i = 0; i < SELECTED_COUNT; i++) {
-                    items[i] = selectedItems.get(i);
-                }
-                GameScreen game = new GameScreen();
-                game.start(stage, code, items);
-            }
-        });
-
+        drawMenuBtn();
 
         Scene scene = new Scene(pane, WIDTH, HEIGHT);
+        stage.setResizable(false); //size stage ro fix mikone
         stage.setScene(scene);
         stage.setTitle("item selection screen");
         stage.show();
@@ -133,7 +105,7 @@ public class ItemSelectionScreen {
         selectionRect.setFitHeight(selectionBgHeight);
         pane.getChildren().add(selectionRect);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < RECT_COUNT; i++) {
             int row = i / 4;
             int col = i % 4;
             int x = startX + col * (rectWidth + horizontalSpace);
@@ -144,7 +116,7 @@ public class ItemSelectionScreen {
             list[i].setStroke(Color.LIGHTBLUE);
             //list[i].setStroke(Color.TRANSPARENT);
             list[i].setFill(Color.TRANSPARENT);
-            if (i < 17) {
+            if (i < TOTAL_ITEM_COUNT) {
                 Image image = new Image(getClass().getResource("/items/" + i + ".png").toExternalForm());
                 ImageView picture = new ImageView(image);
                 picture.setFitWidth(rectWidth);
@@ -154,6 +126,15 @@ public class ItemSelectionScreen {
                 pane.getChildren().add(picture);
             }
             pane.getChildren().add(list[i]);
+
+            final int index = i;
+            list[i].setOnMouseClicked(e -> {
+                if (index < TOTAL_ITEM_COUNT && selectedItems.size() < SELECTED_COUNT && !isSelected[index]) {
+                    selectedItems.add(itemList[index]);
+                    isSelected[index] = true;
+                    loadSelectedItems();
+                }
+            });
         }
     }
 
@@ -163,8 +144,6 @@ public class ItemSelectionScreen {
         int x = 230;
         int startY = 100;
         for (int i = 0; i < SELECTED_COUNT; i++) {
-            if (selectedRects[i] != null)
-                pane.getChildren().remove(selectedRects[i]);
             selectedRects[i] = new Rectangle(x, startY + (i * (height + 10)), width, height);
             selectedRects[i].setFill(Color.TRANSPARENT);
             selectedRects[i].setStroke(Color.TRANSPARENT);
@@ -173,16 +152,12 @@ public class ItemSelectionScreen {
 
             final int index = i;
             selectedRects[i].setOnMouseClicked(e -> {
-                //System.out.println(1);
                 if (index < selectedItems.size()) {
-                    //int num = Item.getOrder(selectedItems.get(index));
                     Item item = new Item(selectedItems.get(index));
                     int num = item.getName().ordinal();
                     isSelected[num] = false;
                     selectedItems.remove(index);
-                    //removeSelectedItems();
                     loadSelectedItems();
-                    drawSelectedRects();
                 }
             });
         }
@@ -198,7 +173,6 @@ public class ItemSelectionScreen {
         for (; i < selectedItems.size(); i++) {
             if (selectedImages[i] != null)
                 pane.getChildren().remove(selectedImages[i]);
-            //int number = Item.getOrder(selectedItems.get(i));
             Item tempItem = new Item(selectedItems.get(i));
             int number = tempItem.getName().ordinal();
             Image image = new Image(getClass().getResource("/items/" + number + ".png").toExternalForm());
@@ -207,6 +181,7 @@ public class ItemSelectionScreen {
             selectedImages[i].setFitHeight(height);
             selectedImages[i].setLayoutX(x);
             selectedImages[i].setLayoutY(startY + (i * (height + 10)));
+            selectedImages[i].setMouseTransparent(true);
             pane.getChildren().add(selectedImages[i]);
         }
         for (; i < SELECTED_COUNT; i++) {
@@ -218,17 +193,10 @@ public class ItemSelectionScreen {
             selectedImages[i].setFitHeight(height);
             selectedImages[i].setLayoutX(x);
             selectedImages[i].setLayoutY(startY + (i * (height + 10)));
-
+            selectedImages[i].setMouseTransparent(true);
             pane.getChildren().add(selectedImages[i]);
         }
     }
-
-//    private void removeSelectedItems() {
-//        for (int i = 0; i < 6; i++) {
-//            if (selectedImages[i] != null)
-//                pane.getChildren().remove(selectedImages[i]);
-//        }
-//    }
 
     private void drawPlayBtn() {
         int btnWidth = 180;
@@ -252,19 +220,38 @@ public class ItemSelectionScreen {
         playBtn.setOnMouseExited(e -> {
             playBtn.setFill(Color.TRANSPARENT);
         });
+        playBtn.setOnMouseClicked(e -> {
+            if (selectedItems.size() == SELECTED_COUNT) {
+                // tabdile arraylist be araye
+                Plant.PlantName[] items = new Plant.PlantName[SELECTED_COUNT];
+                for (int i = 0; i < SELECTED_COUNT; i++) {
+                    items[i] = selectedItems.get(i);
+                }
+                GameScreen game = new GameScreen();
+                game.start(stage, code, items);
+            }
+        });
     }
 
-    private void drawMenu() {
-        Image menuImage = new Image(getClass().getResource("/buttons/menu button.png").toExternalForm());
+    private void drawMenuBtn() {
+        int width = 150;
+        int height = 50;
+        int startX = 1280;
+        int startY = 10;
+
+        Image menuImage = new Image(getClass().getResource("/buttons/menu-button.png").toExternalForm());
         ImageView menuView = new ImageView(menuImage);
-        menuView.setFitWidth(150);
-        menuView.setFitHeight(50);
-        menuView.setLayoutX(1280);
-        menuView.setLayoutY(10);
-        Rectangle menuGameBtn = new Rectangle(1280 , 10 , 150 , 50);
+        menuView.setFitWidth(width);
+        menuView.setFitHeight(height);
+        menuView.setLayoutX(startX);
+        menuView.setLayoutY(startY);
+
+        Rectangle menuGameBtn = new Rectangle(startX , startY , width , height);
         menuGameBtn.setStroke(Color.BLACK);
         menuGameBtn.setFill(Color.TRANSPARENT);
+
         pane.getChildren().addAll(menuView , menuGameBtn);
+
         menuGameBtn.setOnMouseEntered(e -> {
             menuGameBtn.setFill(Color.rgb(200, 200, 200, 0.1));
         });
