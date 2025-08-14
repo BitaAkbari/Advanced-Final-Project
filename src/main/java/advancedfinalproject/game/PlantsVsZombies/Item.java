@@ -6,21 +6,19 @@ import javafx.util.Duration;
 
 public class Item {
 
-    public enum ItemName { SUNFLOWER, PEASHOOTER, REPEATER, SNOW_PEA,
-                           WALL_NUT, TALL_NUT, CHERRY_BOMB, JALAPENO,
-                           GRAVE_BUSTER, COFFEE_BEAN, HYPNO_SHROOM, PUFF_SHROOM,
-                           SCAREDY_SHROOM, DOOM_SHROOM, ICE_SHROOM, LANTERN, FAN };
-
-    private ItemName name;
+    private Plant.PlantName name;
     private int stdRechargeTime;
     private int remainingTime;
     private int price;
     private boolean isSelected;
+    private Timeline recharge;
 
-    public Item(ItemName name) {
+    public Item(Plant.PlantName name) {
+
         this.name = name;
         remainingTime = 0;
         isSelected = false;
+
         switch (name) {
             case SUNFLOWER:
                 price = 50;
@@ -93,7 +91,7 @@ public class Item {
         }
     }
 
-    public ItemName getName() {
+    public Plant.PlantName getName() {
         return name;
     }
 
@@ -101,20 +99,20 @@ public class Item {
         return stdRechargeTime;
     }
 
-    public int getRemainingTime() {
-        return remainingTime;
-    }
+//    public int getRemainingTime() {
+//        return remainingTime;
+//    }
+//
+//    public void setRemainingTime(int remainingTime) {
+//        this.remainingTime = remainingTime;
+//    }
 
     public int getPrice() {
         return price;
     }
 
-    public boolean getIsSelected() {
+    public boolean isSelected() {
         return isSelected;
-    }
-
-    public void setRemainingTime(int remainingTime) {
-        this.remainingTime = remainingTime;
     }
 
 //    public void setIsSelected(boolean isSelected) {
@@ -123,10 +121,15 @@ public class Item {
 
     public void charge() {
         isSelected = true;
-        Timeline recharge = new Timeline(new KeyFrame(Duration.seconds(stdRechargeTime), e -> {
+        recharge = new Timeline(new KeyFrame(Duration.seconds(stdRechargeTime), e -> {
             isSelected = false;
         }));
         recharge.setCycleCount(1);
         recharge.play();
+    }
+
+    public void stopCharge() {
+        if (recharge != null)
+            recharge.stop();
     }
 }
