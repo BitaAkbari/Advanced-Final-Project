@@ -9,50 +9,52 @@ import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 public class GraphicalZombie {
+
     private Zombie zombie;
-    private Zombie.ZombieType zombieType;
     private int frameCount;
     private int frameNo;
     private Image[] frames;
     private ImageView zombieImage;
     public static final double ZOMBIE_WIDTH = 90, ZOMBIE_HEIGHT = 120;
-    private Timeline timeline;
     private double zombieX, zombieY;
     private Circle dot;/////////////
-    private final int DELAY = 150;
-
+    private Timeline timeline;
+    private int delay;
 
     public GraphicalZombie(Zombie z) {
 
         zombie = z;
-        zombieType = z.getType();
 
         zombieX = centerX_To_X();
         zombieY = centerY_To_Y();
 
         String folderName = "";
-        switch(zombieType) {
+        switch (zombie.getType()) {
             case ZOMBIE:
                 frameCount = 7;
                 folderName = "/simple zombie/";
+                delay = 150;
                 break;
             case CONEHEAD_ZOMBIE:
                 frameCount = 7;
                 folderName = "/conehead zombie/";
+                delay = 150;
                 break;
             case SCREEN_DOOR_ZOMBIE:
                 frameCount = 7;
                 folderName = "/screen door zombie/";
+                delay = 150;
                 break;
             case IMP_ZOMBIE:
-                frameCount = 1;
+                frameCount = 28;
                 folderName = "/imp zombie/";
+                delay = 80;
                 break;
         }
 
         frames = new Image[frameCount];
         for (int i = 0; i < frameCount; i++) {
-            String path = getClass().getResource(folderName + (i + 1) + ".png").toExternalForm();
+            String path = getClass().getResource(folderName + i + ".png").toExternalForm();
             frames[i] = new Image(path);
         }
 
@@ -61,24 +63,29 @@ public class GraphicalZombie {
         zombieImage.setFitHeight(ZOMBIE_HEIGHT);
         zombieImage.setLayoutX(zombieX);
         zombieImage.setLayoutY(zombieY);
+        zombieImage.setMouseTransparent(true);
 
         dot = new Circle(zombie.getCenterX(), zombie.getCenterY(), 5);//////////////////////
         dot.setFill(Color.RED);///////////////
 
         frameNo = 0;
-        timeline = new Timeline(new KeyFrame(Duration.millis(DELAY), e -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(delay), e -> {
             frameNo = (frameNo + 1) % frameCount;
             zombieImage.setImage(frames[frameNo]);
             zombieX = centerX_To_X();
-            zombieX -= zombie.getSpeed() * GameScreen.CELL_WIDTH * DELAY / 1000;
-            if (zombieX < -zombieImage.getFitWidth())
-                zombieX = 1500;
+            zombieX -= (zombie.getCurrSpeed() * GameScreen.CELL_WIDTH * delay / 1000);
+            if (zombieX > GameScreen.WIDTH + zombieImage.getFitWidth() / 2)
+                zombie.setHp(0);
             zombie.setCenterX(xToCenterX());
             zombieImage.setLayoutX(zombieX);
             dot.setCenterX(zombie.getCenterX());/////////////
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    public Zombie getZombie() {
+        return zombie;
     }
 
     public ImageView getZombieImage() {
@@ -92,6 +99,7 @@ public class GraphicalZombie {
     public void stop() {
         timeline.pause();
     }
+
     public void start() {
         if (timeline.getStatus() != Timeline.Status.RUNNING)
             timeline.play();
@@ -109,7 +117,9 @@ public class GraphicalZombie {
         return zombie.getCenterY() - ZOMBIE_HEIGHT / 2;
     }
 
-    public Zombie getZombie() {
-        return zombie;
+    public void hypnosis() {
+        zombie.hypnotize();
+        zombieImage.setScaleX(-1);
     }
+
 }

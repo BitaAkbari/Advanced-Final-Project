@@ -14,6 +14,7 @@ public class Zombie {
     private double speed, currSpeed;
     private int hp;
     private boolean isSlowed;
+    private boolean isHypnotized;
     private Timeline slowTimer;
 
     public Zombie(ZombieType type, int row, int col) {
@@ -22,11 +23,12 @@ public class Zombie {
         this.col = col;
 
         isSlowed = false;
+        isHypnotized = false;
 
         if (col == 10) // vaghti az akhare safhe vared shode
             centerX = 1500;
         else // vaghti az ghabr biroon oomade
-            centerX = GameScreen.GRID_START_X + col * GameScreen.CELL_WIDTH;
+            centerX = GameScreen.GRID_START_X + col * GameScreen.CELL_WIDTH + GameScreen.CELL_WIDTH / 2;
 
         centerY = GameScreen.GRID_START_Y + row * GameScreen.CELL_HEIGHT + GraphicalZombie.ZOMBIE_HEIGHT / 2;
 
@@ -61,7 +63,13 @@ public class Zombie {
     }
 
     public void walking() {
-        if (isSlowed)
+        if (isHypnotized) {
+            if (isSlowed)
+                currSpeed = -speed * 0.5;
+            else
+                currSpeed = -speed;
+        }
+        else if (isSlowed)
             currSpeed = speed * 0.5;
         else
             currSpeed = speed;
@@ -75,15 +83,14 @@ public class Zombie {
         currSpeed = speed * 0.5;
 
         slowTimer = new Timeline(new KeyFrame(Duration.seconds(SnowPea.EFFECT_LENGTH), e -> {
-            currSpeed = speed;
+            if (!isHypnotized)
+                currSpeed = speed;
+            else
+                currSpeed = -speed;
             isSlowed = false;
         }));
         slowTimer.setCycleCount(1);
         slowTimer.play();
-    }
-
-    public boolean getIsSlowed() {
-        return isSlowed;
     }
 
     public ZombieType getType() {
@@ -93,6 +100,7 @@ public class Zombie {
     public double getCenterX() {
         return centerX;
     }
+
     public void setCenterX(double x) {
         centerX = x;
         int col = ((int) centerX - GameScreen.GRID_START_X) / GameScreen.CELL_WIDTH;
@@ -103,32 +111,58 @@ public class Zombie {
         return centerY;
     }
 
-    public double getSpeed() {
-        return currSpeed;
-    }
-
     public int getRow() {
         return row;
     }
-//    private void setRow(int row) {
-//        this.row = row;
-//    }
 
     public int getCol() {
         return col;
     }
+
     private void setCol(int col) {
         this.col = col;
+    }
+
+    public double getCurrSpeed() {
+        return currSpeed;
     }
 
     public int getHp() {
         return hp;
     }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
     public void reduceHp() {
         hp --;
+    }
+
+    public boolean isSlowed() {
+        return isSlowed;
+    }
+
+    public void setIsSlowed(boolean slowed) {
+        isSlowed = slowed;
+    }
+
+    public boolean isHypnotized() {
+        return isHypnotized;
+    }
+
+    public void setIsHypnotized(boolean hypnotized) {
+        isHypnotized = hypnotized;
+    }
+
+    public void hypnotize() {
+        isHypnotized = true;
+        if (currSpeed >= 0)
+            currSpeed *= -1;
     }
 
     public void burst() {
         hp = 0;
     }
+
 }
