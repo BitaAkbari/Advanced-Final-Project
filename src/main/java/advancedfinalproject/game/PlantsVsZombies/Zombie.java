@@ -127,6 +127,10 @@ public class Zombie {
         return currSpeed;
     }
 
+    public void setCurrSpeed(double currSpeed) {
+        this.currSpeed = currSpeed;
+    }
+
     public int getHp() {
         return hp;
     }

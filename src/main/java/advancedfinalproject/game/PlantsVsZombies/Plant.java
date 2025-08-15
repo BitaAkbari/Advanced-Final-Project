@@ -3,12 +3,12 @@ package advancedfinalproject.game.PlantsVsZombies;
 public abstract class Plant {
 
     public enum PlantName { SUNFLOWER, PEASHOOTER, REPEATER, SNOW_PEA,
-        WALL_NUT, TALL_NUT, CHERRY_BOMB, JALAPENO,
-        GRAVE_BUSTER, COFFEE_BEAN, HYPNO_SHROOM, PUFF_SHROOM,
-        SCAREDY_SHROOM, DOOM_SHROOM, ICE_SHROOM, LANTERN, FAN };
+                            WALL_NUT, TALL_NUT, CHERRY_BOMB, JALAPENO,
+                            GRAVE_BUSTER, COFFEE_BEAN, HYPNO_SHROOM, PUFF_SHROOM,
+                            SCAREDY_SHROOM, DOOM_SHROOM, ICE_SHROOM, LANTERN, FAN };
 
     private PlantName type;
-    private int row, col;
+    protected int row, col;
     protected int hp;
 
     public Plant(PlantName name, int row, int col) {
@@ -37,6 +37,10 @@ public abstract class Plant {
 
     public int getHp() {
         return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 
     public void reduceHp() {

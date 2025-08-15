@@ -1,5 +1,6 @@
 package advancedfinalproject.game.PlantsVsZombies;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
@@ -11,12 +12,17 @@ public class Cell {
     private Content cellContent;
     private Plant plant;
     private int row, col;
+    private boolean hasFog, lanternEffect, fanEffect;
+    private Timeline removeFog;
 
     public Cell(int row, int col) {
         cellContent = Content.BLANK;
         plant = null;
         this.row = row;
         this.col = col;
+        hasFog = false;
+        lanternEffect = false;
+        fanEffect = false;
     }
 
     public boolean placePlant(Plant plant) {
@@ -36,7 +42,8 @@ public class Cell {
         else if (cellContent == Content.BLANK) {
             this.plant = plant;
             cellContent = Content.PLANT;
-            if (plant instanceof BombPlant || plant instanceof Sunflower)
+            if (plant instanceof BombPlant || plant instanceof Sunflower
+                || plant instanceof Lantern || plant instanceof Fan)
                 plant.act();
             return true;
         }
@@ -44,7 +51,9 @@ public class Cell {
     }
 
     public boolean removePlant() {
-        if (cellContent == Content.PLANT) {
+        if (cellContent == Content.PLANT || cellContent == Content.BLANK) {
+            if (plant instanceof Lantern)
+                ((Lantern) plant).stopAct();
             plant.clear();
             plant = null;
             cellContent = Content.BLANK;
@@ -69,12 +78,52 @@ public class Cell {
         return plant;
     }
 
+    public void setPlant(Plant plant) {
+        this.plant = plant;
+    }
+
+    public boolean getHasFog() {
+        return hasFog;
+    }
+
+    public void setHasFog(boolean hasFog) {
+        this.hasFog = hasFog;
+    }
+
+    public boolean isFanEffect() {
+        return fanEffect;
+    }
+
+    public void setFanEffect(boolean fanEffect) {
+        this.fanEffect = fanEffect;
+    }
+
+    public boolean isLanternEffect() {
+        return lanternEffect;
+    }
+
+    public void setLanternEffect(boolean lanternEffect) {
+        this.lanternEffect = lanternEffect;
+    }
+
     public void unblock() {
         Timeline unblock = new Timeline(new KeyFrame(Duration.seconds(10), e -> {
             cellContent = Content.BLANK;
         }));
         unblock.setCycleCount(1);
         unblock.play();
+    }
+
+    public void removeFogByFan() {
+        if (removeFog != null && removeFog.getStatus() == Animation.Status.RUNNING) {
+            removeFog.stop();
+            removeFog = null;
+        }
+        removeFog = new Timeline(new KeyFrame(Duration.seconds(20), e -> {
+            setFanEffect(false);
+        }));
+        removeFog.setCycleCount(1);
+        removeFog.play();
     }
 
 }

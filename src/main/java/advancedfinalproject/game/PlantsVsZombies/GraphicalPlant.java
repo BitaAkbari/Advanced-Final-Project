@@ -168,7 +168,14 @@ public class GraphicalPlant {
                 isAnimation = false;
                 break;
             case FAN:
-
+                frameCount = 23;
+                folderName += "fan/";
+                delay = 100;
+                plantWidth += 20;
+                plantHeight += 20;
+                x -= 10;
+               // y += 25;
+                isAnimation = true;
                 break;
         }
 
@@ -216,6 +223,18 @@ public class GraphicalPlant {
 
     public ImageView getPlantImage() {
         return plantImage;
+    }
+
+    public boolean isAnimation() {
+        return isAnimation;
+    }
+
+    public int getFrameNo() {
+        return frameNo;
+    }
+
+    public void setFrameNo(int num) {
+        frameNo = num;
     }
 
     public void stop() {

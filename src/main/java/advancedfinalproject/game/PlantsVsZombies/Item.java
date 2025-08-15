@@ -11,7 +11,7 @@ public class Item {
     private int remainingTime;
     private int price;
     private boolean isSelected;
-    private Timeline recharge;
+    private Timeline recharge, updateRemainingTime;
 
     public Item(Plant.PlantName name) {
 
@@ -99,13 +99,13 @@ public class Item {
         return stdRechargeTime;
     }
 
-//    public int getRemainingTime() {
-//        return remainingTime;
-//    }
-//
-//    public void setRemainingTime(int remainingTime) {
-//        this.remainingTime = remainingTime;
-//    }
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(int remainingTime) {
+        this.remainingTime = remainingTime;
+    }
 
     public int getPrice() {
         return price;
@@ -121,7 +121,18 @@ public class Item {
 
     public void charge() {
         isSelected = true;
-        recharge = new Timeline(new KeyFrame(Duration.seconds(stdRechargeTime), e -> {
+        if (remainingTime == 0)
+            remainingTime = stdRechargeTime;
+
+        int remain = remainingTime;
+
+        updateRemainingTime = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            remainingTime --;
+        }));
+        updateRemainingTime.setCycleCount(remain);
+        updateRemainingTime.play();
+
+        recharge = new Timeline(new KeyFrame(Duration.seconds(remain), e -> {
             isSelected = false;
         }));
         recharge.setCycleCount(1);
@@ -131,5 +142,7 @@ public class Item {
     public void stopCharge() {
         if (recharge != null)
             recharge.stop();
+        if (updateRemainingTime != null)
+            updateRemainingTime.stop();
     }
 }

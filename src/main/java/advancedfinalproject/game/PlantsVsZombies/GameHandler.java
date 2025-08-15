@@ -22,8 +22,9 @@ public class GameHandler {
     private ArrayList<GraphicalBullet> graphicalBullets;
     private static ArrayList<GraphicalSun> graphicalSuns;
     private ImageView[][] blockedImages;
+    private static ImageView[][] fogImages;
     private static Pane pane;
-    private Timeline timer, checkLoop, sunGenerator;
+    private Timeline timer, checkLoop, sunGenerator, checkWin;
     private Timeline eating;
     private Stage stage;
     private static boolean isGameStopped;
@@ -41,22 +42,29 @@ public class GameHandler {
         graphicalSuns = new ArrayList<>();
 
         blockedImages = new ImageView[GameState.ROW_COUNT][GameState.COL_COUNT];
+
         for (int i = 0; i < GameState.ROW_COUNT; i++)
-            for (int j = 0; j < GameState.COL_COUNT; j++)
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
                 blockedImages[i][j] = null;
+            }
+
+        loadFogImages();
 
         timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            gameState.setSeconds();
+            gameState.increaseSeconds();
             GameScreen.setTimerLabel(gameState.getSeconds() + " s");
         }));
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
 
-        zombieHandler.sendZombie();
+        drawFog();
+
+        //zombieHandler.sendZombie();
 
         // in bayad 0.5s bemoone chon dar har dor ejra yek joon az giyah kam mikone
         eating = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
             checkEatingPlant();
+            checkEatingEachOther();
         }));
         eating.setCycleCount(Timeline.INDEFINITE);
         eating.play();
@@ -74,6 +82,8 @@ public class GameHandler {
                 stopAllTimelines();
             }
             checkBlockedCells();
+            if (gameState.getCode() == GameState.GameCode.NIGHT)
+                updateFogImages();
         }));
         checkLoop.setCycleCount(Timeline.INDEFINITE);
         checkLoop.play();
@@ -88,16 +98,20 @@ public class GameHandler {
             sunGenerator.play();
         }
 
-        Timeline checkWin = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
+        checkWin = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
             if (gameState.getZombieList().isEmpty()) {
                 //System.out.println("you won");
                 stopAllTimelines();
             }
         }));
         checkWin.setCycleCount(Timeline.INDEFINITE);
-        checkWin.setDelay(Duration.seconds(60));
+        checkWin.setDelay(Duration.seconds(120));
         checkWin.play();
 
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 
     public PlantHandler getPlantHandler() {
@@ -131,12 +145,35 @@ public class GameHandler {
             int col = zombie.getCol();
             if (row < 0 || row >= GameState.ROW_COUNT || col < 0 || col >= GameState.COL_COUNT)
                 continue;
-            if (gameState.getField()[row][col].getPlant() != null) {
+            if (gameState.getField()[row][col].getPlant() != null && !zombie.isHypnotized()) {
                 zombie.eating();
                 gameState.getField()[row][col].getPlant().reduceHp();
             }
             else
                 zombie.walking();
+        }
+    }
+
+    private void checkEatingEachOther() {
+        for (GraphicalZombie graphicalZombie: zombieHandler.getGraphicalZombies()) {
+            if (graphicalZombie.getZombie().isHypnotized()) {
+                GraphicalZombie z = graphicalZombie;
+
+                for (GraphicalZombie zombie: zombieHandler.getGraphicalZombies()) {
+                    if (!zombie.getZombie().isHypnotized() &&
+                        zombie.getZombie().getRow() == z.getZombie().getRow()
+                        && Math.abs(zombie.getZombie().getCenterX() - z.getZombie().getCenterX()) < 50) {
+                        z.getZombie().eating();
+                        zombie.getZombie().eating();
+                        z.getZombie().reduceHp();
+                        zombie.getZombie().reduceHp();
+                    }
+                    else {
+                        z.getZombie().walking();
+                        zombie.getZombie().walking();
+                    }
+                }
+            }
         }
     }
 
@@ -147,7 +184,7 @@ public class GameHandler {
             zombieRow = zombie.getZombie().getRow();
             zombieCol = zombie.getZombie().getCol();
 
-            if (zombieRow == row && zombieCol >= col)
+            if (zombieRow == row && zombieCol >= col && !zombie.getZombie().isHypnotized())
                 return true;
         }
         return false;
@@ -160,7 +197,7 @@ public class GameHandler {
             zombieRow = zombie.getZombie().getRow();
             zombieCol = zombie.getZombie().getCol();
 
-            if (zombieRow == row && zombieCol - col <= 4)
+            if (zombieRow == row && zombieCol >= col && zombieCol - col <= 4 && !zombie.getZombie().isHypnotized())
                 return true;
         }
         return false;
@@ -174,7 +211,8 @@ public class GameHandler {
             zombieCol = zombie.getZombie().getCol();
 
             if (Math.abs(zombieRow - row) <= 1 &&
-                    Math.abs(zombieCol - col) <= 1)
+                    Math.abs(zombieCol - col) <= 1
+                    && !zombie.getZombie().isHypnotized())
                 return true;
         }
         return false;
@@ -254,7 +292,8 @@ public class GameHandler {
             for (GraphicalZombie gz : zombieHandler.getGraphicalZombies()) {
                 if (!sw && gb.getBullet().getRow() == gz.getZombie().getRow()
                         && gb.getBullet().getCol() <= gz.getZombie().getCol()) {
-                    if (Math.abs(gb.getBullet().getCenterX() - gz.getZombie().getCenterX()) <= 40) {
+                    if (Math.abs(gb.getBullet().getCenterX() - gz.getZombie().getCenterX()) <= 40 &&
+                        !gz.getZombie().isHypnotized()) {
                         gz.getZombie().reduceHp();
                         if (gb.getBullet().getType() == Bullet.BulletType.FROZEN) {
                             gz.getZombie().slowDown();
@@ -288,7 +327,21 @@ public class GameHandler {
                 (gameState.getCode() == GameState.GameCode.NIGHT || !((Shroom) plant).isSleeping())) {
                     if (plant instanceof IceShroom || plant instanceof DoomShroom)
                         plant.act();
+                    else if (plant instanceof HypnoShroom) {
+                        boolean sw = false;
+                        for (GraphicalZombie z: zombieHandler.getGraphicalZombies()) {
+                            if (z.getZombie().getRow() == plant.getRow() &&
+                            z.getZombie().getCol() == plant.getCol()) {
+                                ((HypnoShroom) plant).addZombie(z);
+                                sw = true;
+                            }
+                        }
+                        if (sw)
+                            plant.act();
+                    }
                 }
+                else if (plant instanceof Lantern)
+                    plant.act();
             }
     }
 
@@ -356,6 +409,7 @@ public class GameHandler {
         checkLoop.stop();
         eating.stop();
         zombieHandler.clear();
+
         for (GraphicalZombie graphicalZombie : zombieHandler.getGraphicalZombies()) {
             graphicalZombie.stop();
         }
@@ -363,15 +417,21 @@ public class GameHandler {
             for (int j = 0; j < GameState.COL_COUNT; j++) {
                 if (plantHandler.getGraphicPlants()[i][j] != null)
                     plantHandler.getGraphicPlants()[i][j].stop();
-                if (gameState.getField()[i][j].getPlant() != null)
-                    gameState.getField()[i][j].getPlant().clear();
+                if (gameState.getField() != null)
+                    if (gameState.getField()[i][j].getPlant() != null)
+                        gameState.getField()[i][j].getPlant().clear();
             }
+
         for (GraphicalBullet bullet: graphicalBullets)
             bullet.stop();
         for (GraphicalSun sun: graphicalSuns) {
             sun.getSunImage().setMouseTransparent(true);
             sun.stop();
         }
+        checkWin.stop();
+
+        for (Item item: gameState.getStore())
+            item.stopCharge();
 
         for (Node node : pane.getChildren()) {
             if (node.getUserData() instanceof GraphicalSun gs) {
@@ -385,7 +445,6 @@ public class GameHandler {
                 gz.stop();
             }
         }
-
     }
 
     private void showLoseTab() {
@@ -464,10 +523,10 @@ public class GameHandler {
                 blockedImages[i][j] == null) {
                     Image image = new Image(getClass().getResource("/plants/doom shroom effect.png").toExternalForm());
                     blockedImages[i][j] = new ImageView(image);
-                    blockedImages[i][j].setFitWidth(GameScreen.CELL_WIDTH);
-                    blockedImages[i][j].setFitHeight(GameScreen.CELL_HEIGHT);
-                    double x = GameScreen.GRID_START_X + j * GameScreen.CELL_WIDTH;
-                    double y = GameScreen.GRID_START_Y + i * GameScreen.CELL_HEIGHT;
+                    blockedImages[i][j].setFitWidth(GameScreen.CELL_WIDTH - 20);
+                    blockedImages[i][j].setFitHeight(GameScreen.CELL_HEIGHT - 20);
+                    double x = GameScreen.GRID_START_X + j * GameScreen.CELL_WIDTH + 10;
+                    double y = GameScreen.GRID_START_Y + i * GameScreen.CELL_HEIGHT + 10;
                     blockedImages[i][j].setLayoutX(x);
                     blockedImages[i][j].setLayoutY(y);
 
@@ -481,21 +540,81 @@ public class GameHandler {
             }
     }
 
-//    private void clear() {
-//        //stopAllTimelines();
-//
-//        graphicalBullets.clear();
-//        graphicalSuns.clear();
-//        gameState.getSunList().clear();
-//        gameState.getZombieList().clear();
-//        gameState.getBulletList().clear();
-//        gameState.clearField();
-//        plantHandler.clearGraphicalPlants();
-//
-//        pane.getChildren().clear();
-//
-//        zombieHandler = new ZombieHandler(pane, gameState);
-//        plantHandler = new PlantHandler(pane, gameState);
-//
-//    }
+    private void loadFogImages() {
+        fogImages = new ImageView[GameState.ROW_COUNT][GameState.COL_COUNT + 1];
+        for (int i = 0; i < GameState.ROW_COUNT; i++)
+            for (int j = 0; j < GameState.COL_COUNT + 1; j++)
+                fogImages[i][j] = null;
+
+        String address = "/Screen Images/fog/";
+        for (int i = 0; i < GameState.ROW_COUNT; i++) {
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                Cell cell = gameState.getField()[i][j];
+                if (cell.getHasFog()) {
+                    Image image = new Image(getClass().getResource(address + (j - 6) + ".png").toExternalForm());
+                    double x = GameScreen.GRID_START_X + j * GameScreen.CELL_WIDTH;
+                    double y = GameScreen.GRID_START_Y + i * GameScreen.CELL_HEIGHT;
+                    ImageView fogImage = new ImageView(image);
+                    fogImage.setFitWidth(GameScreen.CELL_WIDTH);
+                    fogImage.setFitHeight(GameScreen.CELL_HEIGHT);
+                    fogImage.setLayoutX(x);
+                    fogImage.setLayoutY(y);
+                    fogImage.setMouseTransparent(true);
+                    fogImages[i][j] = fogImage;
+
+                }
+            }
+            if (gameState.getField()[i][GameState.COL_COUNT - 1].getHasFog()) {
+                int j = GameState.COL_COUNT;
+                double x = GameScreen.GRID_START_X + j * GameScreen.CELL_WIDTH;
+                double y = GameScreen.GRID_START_Y + i * GameScreen.CELL_HEIGHT;
+                Image image = new Image(getClass().getResource(address + (j - 6) + ".png").toExternalForm());
+                ImageView fogImage = new ImageView(image);
+                fogImage.setFitWidth(GameScreen.CELL_WIDTH);
+                fogImage.setFitHeight(GameScreen.CELL_HEIGHT);
+                fogImage.setLayoutX(x);
+                fogImage.setLayoutY(y);
+                fogImage.setMouseTransparent(true);
+                fogImages[i][j] = fogImage;
+            }
+        }
+    }
+
+    private void drawFog() {
+        for (int i = 0; i < GameState.ROW_COUNT; i++)
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                Cell cell = gameState.getField()[i][j];
+                if (cell.getHasFog() && !cell.isLanternEffect() && !cell.isFanEffect()) {
+                    pane.getChildren().add(fogImages[i][j]);
+                    if (j == GameState.COL_COUNT - 1)
+                        pane.getChildren().add(fogImages[i][j + 1]);
+                }
+            }
+    }
+
+    public static void updateFogImages() {
+        for (int i = 0; i < GameState.ROW_COUNT; i++)
+            for (int j = 0; j < GameState.COL_COUNT; j++) {
+                Cell cell = gameState.getField()[i][j];
+                if (cell.getHasFog()) {
+                    if (!cell.isLanternEffect() && !cell.isFanEffect()) {
+                        pane.getChildren().remove(GameHandler.fogImages[i][j]);
+                        pane.getChildren().add(GameHandler.fogImages[i][j]);
+                        if (j == GameState.COL_COUNT - 1) {
+                            pane.getChildren().remove(GameHandler.fogImages[i][j + 1]);
+                            pane.getChildren().add(GameHandler.fogImages[i][j + 1]);
+                        }
+                    }
+                    else {
+                        pane.getChildren().remove(GameHandler.fogImages[i][j]);
+                        if (j == GameState.COL_COUNT - 1)
+                            pane.getChildren().remove(GameHandler.fogImages[i][j + 1]);
+                    }
+                }
+            }
+    }
+
+    public static boolean isGameStopped() {
+        return isGameStopped;
+    }
 }

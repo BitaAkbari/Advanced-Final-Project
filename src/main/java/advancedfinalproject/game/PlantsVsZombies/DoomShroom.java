@@ -21,9 +21,9 @@ public class DoomShroom extends Shroom {
                     zombie.burst();
                 }
             }
-            hp = 0;
             gameState.getField()[getRow()][getCol()].setCellContent(Cell.Content.BLOCKED);
             gameState.getField()[getRow()][getCol()].unblock();
+            hp = 0;
         }));
         explode.setCycleCount(1);
         explode.play();

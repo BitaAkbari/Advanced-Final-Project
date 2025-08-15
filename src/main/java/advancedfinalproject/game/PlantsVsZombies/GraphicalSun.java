@@ -25,7 +25,7 @@ public class GraphicalSun {
         sunImage.setLayoutX(sun.getX());
 
         if(sun.getSpeed() != 0) {
-            sunImage.setLayoutY(-HEIGHT);
+            sunImage.setLayoutY(sun.getY());
             double speed = sun.getSpeed() * GameScreen.CELL_HEIGHT * DELAY / 1000;
 
             move = new Timeline();
@@ -56,7 +56,7 @@ public class GraphicalSun {
     }
 
     public void stop() {
-        move.stop();
-        //move.getKeyFrames().clear();
+        if (move != null)
+            move.stop();
     }
 }

@@ -13,7 +13,7 @@ public class GameState {
     private GameCode code;
     private int sunPoint;
     private final int[] seconds = {0};
-    private Item.ItemName[] names;
+    private Plant.PlantName[] names;
     private final Item[] store = new Item[ITEM_COUNT];
     private Cell[][] field;
     private final Plant[][] coffeeBeanList = new Plant[ROW_COUNT][COL_COUNT];
@@ -23,10 +23,16 @@ public class GameState {
     private Item selectedItem;
     //private Cell selectedCell;
     private int lastChoice;
+    private boolean hasFog;
 
-    public GameState(GameCode gameCode, Item.ItemName[] itemNames) {
+    public GameState(GameCode gameCode, Plant.PlantName[] itemNames) {
         code = gameCode;
         sunPoint = 100; // in ro bayad be 0 taghir bedim ba'dan
+
+        if (code == GameCode.NIGHT)
+            hasFog = true;
+        else
+            hasFog = false;
 
         names = itemNames;
         for (int i = 0; i < ITEM_COUNT; i++)
@@ -38,6 +44,13 @@ public class GameState {
                 field[i][j] = new Cell(i, j);
                 coffeeBeanList[i][j] = null;
             }
+
+        if (hasFog) {
+            for (int i = 0; i < ROW_COUNT; i++)
+                for (int j = 6; j < COL_COUNT; j++) {
+                    field[i][j].setHasFog(true);
+                }
+        }
 
 
 
@@ -60,6 +73,10 @@ public class GameState {
         return sunPoint;
     }
 
+    public void setSunPoint(int point) {
+        sunPoint = point;
+    }
+
     public void addPoint() {
         sunPoint += Sun.POINT;
     }
@@ -68,7 +85,11 @@ public class GameState {
         return seconds[0];
     }
 
-    public void setSeconds() {
+    public void setSeconds(int second) {
+        seconds[0] = second;
+    }
+
+    public void increaseSeconds() {
         seconds[0]++;
     }
 
@@ -78,6 +99,10 @@ public class GameState {
 
     public Cell[][] getField() {
         return field;
+    }
+
+    public void setField(Cell[][] field) {
+        this.field = field;
     }
 
     public Plant[][] getCoffeeBeanList() {
@@ -123,7 +148,7 @@ public class GameState {
             lastChoice = -1;//////////////////////
             return false;
         }
-        else if (!store[index].getIsSelected() && sunPoint >= store[index].getPrice()) {
+        else if (!store[index].isSelected() && sunPoint >= store[index].getPrice()) {
             selectedItem = store[index];
             return true;
         }
@@ -132,7 +157,7 @@ public class GameState {
 
     public boolean buyAndPlant(int cellRow, int cellCol) {
         if (selectedItem != null) {
-            Plant plant = itemToPlant(selectedItem, cellRow, cellCol);
+            Plant plant = itemToPlant(selectedItem.getName(), cellRow, cellCol);
             if (field[cellRow][cellCol].placePlant(plant)) {
                 if (plant instanceof CoffeeBean) {
                     if (code == GameCode.DAY && coffeeBeanList[cellRow][cellCol] == null) {
@@ -152,8 +177,8 @@ public class GameState {
         return false;
     }
 
-    private Plant itemToPlant(Item item, int row, int col) {
-        switch (item.getName()) {
+    public Plant itemToPlant(Plant.PlantName name, int row, int col) {
+        switch (name) {
             case SUNFLOWER:
                 return new Sunflower(row, col);
             case PEASHOOTER:
@@ -185,9 +210,9 @@ public class GameState {
             case ICE_SHROOM:
                 return new IceShroom(row, col);
             case LANTERN:
-                return new Lantern(row, col);
+                return new Lantern(this, row, col);
             case FAN:
-                return new Fan(row, col);
+                return new Fan(this, row, col);
             default:
                 return null;
         }

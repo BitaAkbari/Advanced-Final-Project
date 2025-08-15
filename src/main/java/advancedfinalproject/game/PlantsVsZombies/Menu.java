@@ -69,7 +69,14 @@ public class Menu {
         pane.getChildren().add(dayGameBtn);
 
         dayGameBtn.setOnMouseClicked(e -> {
-            ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage, GameState.GameCode.DAY);
+            Load load = new Load(GameState.GameCode.DAY);
+            if (load.isEmpty()) {
+                ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage, GameState.GameCode.DAY);
+            }
+            else {
+                GameScreen gameScreen = new GameScreen(menuStage, load);
+                //gameScreen.start();
+            }
         });
         dayGameBtn.setOnMouseEntered(e -> {
             dayGameBtn.setStroke(Color.RED);
@@ -96,7 +103,14 @@ public class Menu {
         pane.getChildren().add(nightGameBtn);
 
         nightGameBtn.setOnMouseClicked(e -> {
-            ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage, GameState.GameCode.NIGHT);
+            Load load = new Load(GameState.GameCode.NIGHT);
+            if (load.isEmpty()) {
+                ItemSelectionScreen itemSelection = new ItemSelectionScreen(menuStage, GameState.GameCode.NIGHT);
+            }
+            else {
+                GameScreen gameScreen = new GameScreen(menuStage, load);
+                //gameScreen.start();
+            }
         });
         nightGameBtn.setOnMouseEntered(e -> {
             nightGameBtn.setStroke(Color.RED);

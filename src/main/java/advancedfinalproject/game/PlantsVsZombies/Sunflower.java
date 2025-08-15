@@ -28,7 +28,9 @@ public class Sunflower extends Plant {
 
     @Override
     public void clear() {
-        sunGenerator.stop();
-        sunGenerator = null;
+        if (sunGenerator != null) {
+            sunGenerator.stop();
+            sunGenerator = null;
+        }
     }
 }

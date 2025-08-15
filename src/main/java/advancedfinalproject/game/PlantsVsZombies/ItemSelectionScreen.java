@@ -227,8 +227,8 @@ public class ItemSelectionScreen {
                 for (int i = 0; i < SELECTED_COUNT; i++) {
                     items[i] = selectedItems.get(i);
                 }
-                GameScreen game = new GameScreen();
-                game.start(stage, code, items);
+                GameScreen game = new GameScreen(stage, code, items);
+                //game.start();
             }
         });
     }

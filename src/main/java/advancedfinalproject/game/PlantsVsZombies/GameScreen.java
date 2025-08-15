@@ -83,37 +83,69 @@ public class GameScreen {
     private Rectangle[] store = new Rectangle[ITEM_COUNT];
     private GameState.GameCode gameCode;
     private GameState gameState;
-    static Label point;
-    GameHandler gameHandler;
-    static Label timerLabel;
-    Shovel shovel;
+    private Pane pane;
+    private static Label point;
+    private GameHandler gameHandler;
+    private static Label timerLabel;
+    private Shovel shovel;
     private Stage gameStage;
-    private Item.ItemName[] items;
+    private Plant.PlantName[] items;
     private ImageView[][] graveImages;
+    private Timeline recharge;
 
-
-    public void start(Stage gameStage, GameState.GameCode code, Item.ItemName[] selectedItems) {
-
+    public GameScreen(Stage gameStage) {
         this.gameStage = gameStage;
-        items = selectedItems;
-        Pane pane = new Pane();
-        gameCode = code;
-        gameState = new GameState(gameCode, selectedItems);
+        pane = new Pane();
 
         gameStage.setTitle("game screen");
-        //gameStage.setMaximized(true);
         gameStage.setResizable(false); //size stage ro fix mikone
+    }
+
+    public GameScreen(Stage gameStage, GameState.GameCode code, Plant.PlantName[] selectedItems) {
+        this(gameStage);
+        //this.gameStage = gameStage;
+        items = selectedItems;
+        gameCode = code;
+        gameState = new GameState(gameCode, selectedItems);
+        bulidScreen();
+        gameHandler = new GameHandler(pane, gameState, gameStage);
+        gameHandler.getZombieHandler().sendZombie();
+        start();
+
+    }
+
+    public GameScreen(Stage gameStage, Load load) {
+        this(gameStage);
+        load.uploadData(gameStage, pane);
+        gameCode = load.getCode();
+        items = load.getItemNames();
+        gameState = load.getGameState();
+        bulidScreen();
+        load.uploadGraphic();
+        gameHandler = load.getGameHandler();
+
+        for (int i = 0; i < GameState.ITEM_COUNT; i++) {
+            if (gameState.getStore()[i].isSelected()) {
+                store[i].setFill(Color.rgb(64, 64, 64, 0.7));
+                int rechargeTime = gameState.getStore()[i].getRemainingTime();
+                int index = i;
+                recharge = new Timeline(new KeyFrame(Duration.seconds(rechargeTime), ev -> {
+                    store[index].setFill(Color.TRANSPARENT);
+                }));
+                recharge.setCycleCount(1);
+                recharge.play();
+            }
+        }
 
 
-        Image screen = new Image(getClass().getResource("/Screen Images/day-background.png").toExternalForm());
-        ImageView screenImage = new ImageView(screen);
-        screenImage.fitWidthProperty().bind(pane.widthProperty());
-        screenImage.fitHeightProperty().bind(pane.heightProperty());
+        start();
+    }
 
-
+    public void bulidScreen() {
         addScreenImage(pane);
         drawGrid(pane);
-        if (gameCode == GameState.GameCode.NIGHT) drawGrave(pane);
+        if (gameCode == GameState.GameCode.NIGHT)
+            drawGrave(pane);
         buildStore(pane);
         drawMenuBtn(pane);
 
@@ -134,7 +166,7 @@ public class GameScreen {
         pane.getChildren().add(point);
 
 //        ---------------------------------------------------------------
-        timerLabel = new Label("0 s");
+        timerLabel = new Label(gameState.getSeconds() + " s");
         timerLabel.setLayoutX(800);
         timerLabel.setLayoutY(20);
         timerLabel.setFont(Font.font("Arial", 40));
@@ -143,8 +175,9 @@ public class GameScreen {
 //          ------------------------------------------------------------------
 
         shovel = new Shovel(pane);
+    }
 
-        gameHandler = new GameHandler(pane, gameState, gameStage);
+    public void start() {
 
         if(gameCode == GameState.GameCode.NIGHT) {
             Timeline removeGraves = new Timeline(new KeyFrame(Duration.millis(150), e -> {
@@ -153,6 +186,17 @@ public class GameScreen {
             removeGraves.setCycleCount(Timeline.INDEFINITE);
             removeGraves.play();
         }
+
+        Timeline stopGraphic = new Timeline();
+        stopGraphic.getKeyFrames().add(new KeyFrame(Duration.millis(100), e -> {
+            if (gameHandler.isGameStopped()) {
+                if (recharge != null)
+                    recharge.stop();
+                stopGraphic.stop();
+            }
+        }));
+        stopGraphic.setCycleCount(Timeline.INDEFINITE);
+        stopGraphic.play();
 
 
 
@@ -204,13 +248,12 @@ public class GameScreen {
 
                 // vaghti click shod
                 cell.setOnMouseClicked(e -> {
-                    //System.out.println(cellRow + ", " + cellCol + " is clicked");
                     if (gameState.buyAndPlant(cellRow, cellCol)) {
                         store[gameState.getLastChoice()].setStroke(Color.BLACK);
                         store[gameState.getLastChoice()].setFill(Color.rgb(64, 64, 64, 0.7));
                         int rechargeTime = gameState.getStore()[gameState.getLastChoice()].getStdRechargeTime();
                         int index = gameState.getLastChoice();
-                        Timeline recharge = new Timeline(new KeyFrame(Duration.seconds(rechargeTime), ev -> {
+                        recharge = new Timeline(new KeyFrame(Duration.seconds(rechargeTime), ev -> {
                             store[index].setFill(Color.TRANSPARENT);
                         }));
                         recharge.setCycleCount(1);
@@ -266,7 +309,6 @@ public class GameScreen {
                 }
                 else {
                     store[index].setStroke(Color.BLACK);
-//                    //gameState.setLastChoice(-1);//---------------- bug-------------------
                 }
             });
         }
@@ -278,7 +320,7 @@ public class GameScreen {
         int x = 600;
         int y = 200;
 
-        Image menuImage = new Image(getClass().getResource("/buttons/menu button.png").toExternalForm());
+        Image menuImage = new Image(getClass().getResource("/buttons/menu-button.png").toExternalForm());
         ImageView menuView = new ImageView(menuImage);
         menuView.setFitWidth(150);
         menuView.setFitHeight(50);
@@ -311,6 +353,7 @@ public class GameScreen {
             pane.getChildren().addAll(mainMenuView, mainMenuBtn);
             mainMenuBtn.setOnMouseClicked(event -> {
                 //pane.getChildren().remove(bgMenuView);
+                new Save(gameHandler);
                 new Menu(gameStage);
             });
             mainMenuBtn.setOnMouseEntered(event -> {
@@ -352,6 +395,8 @@ public class GameScreen {
             backBtn.setFill(Color.TRANSPARENT);
             pane.getChildren().addAll(backView, backBtn);
             backBtn.setOnMouseClicked(event -> {
+                new Save(gameHandler);
+                new GameScreen(gameStage, new Load(gameCode));
                 //pane.getChildren().remove(bgMenuView);
             });
             backBtn.setOnMouseEntered(event -> {
@@ -371,7 +416,7 @@ public class GameScreen {
 
     }
 
-    private void drawGrave(Pane pane){
+    private void drawGrave(Pane pane) {
 
         graveImages = new ImageView[GameState.ROW_COUNT][GameState.COL_COUNT];
 
@@ -411,6 +456,7 @@ public class GameScreen {
             for (int j = 0 ; j < GameState.COL_COUNT ; j++) {
                 if (graveImages[i][j] != null && gameState.getField()[i][j].getCellContent() != Cell.Content.GRAVE) {
                     pane.getChildren().remove(graveImages[i][j]);
+                    graveImages[i][j] = null;
                 }
             }
         }

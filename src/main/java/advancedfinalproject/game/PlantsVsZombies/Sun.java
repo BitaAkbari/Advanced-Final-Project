@@ -29,24 +29,23 @@ public class Sun {
         this.y = y;
         realY = y;
         speed = 0;
-        timeLine();
-        time.play();
+        startTimeline();
     }
-    private void timeLine() {
+    public void startTimeline() {
         time = new Timeline(new KeyFrame(Duration.seconds(LIFE_TIME),e -> {
             isAlive = false;
         }));
         time.setCycleCount(1);
-    }
-
-    public void startTimeline() {
-        timeLine();
         time.play();
     }
 
 
      public double getX() {
         return x;
+     }
+
+     public void setX(double x) {
+        this.x = x;
      }
 
     public double getY() {
@@ -59,6 +58,10 @@ public class Sun {
 
     public double getRealY() {
         return realY;
+    }
+
+    public void setRealY(double realY) {
+        this.realY = realY;
     }
 
     public boolean getIsAlive() {
