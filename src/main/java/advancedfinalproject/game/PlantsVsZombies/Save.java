@@ -42,11 +42,14 @@ public class Save {
                     output.writeBoolean(cell.getHasFog());
                     output.writeBoolean(cell.isLanternEffect());
                     output.writeBoolean(cell.isFanEffect());
+                    output.writeInt(cell.getRemainingSeconds());
 
                     Plant plant = cell.getPlant();
                     if (plant != null) {
                         output.writeUTF(plant.getType().name());
                         output.writeInt(plant.getHp());
+                        if (plant instanceof Shroom)
+                            output.writeBoolean(((Shroom) plant).isSleeping());
                     }
                     else {
                         output.writeUTF("NULL");
@@ -90,6 +93,17 @@ public class Save {
                 output.writeDouble(sun.getX());
                 output.writeDouble(sun.getY());
                 output.writeDouble(sun.getRealY());
+            }
+
+            int bulletCount = gameState.getBulletList().size();
+            output.writeInt(bulletCount);
+            for (int i = 0; i < bulletCount; i++) {
+                Bullet bullet = gameState.getBulletList().get(i);
+                output.writeUTF(bullet.getType().name());
+                output.writeInt(bullet.getSourceRow());
+                output.writeInt(bullet.getSourceCol());
+                output.writeDouble(bullet.getCenterX());
+                output.writeDouble(bullet.getCenterY());
             }
         }
         catch (Exception e) {

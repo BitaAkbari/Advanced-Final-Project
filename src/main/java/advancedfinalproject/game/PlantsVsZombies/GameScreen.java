@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameScreen {
@@ -103,7 +104,6 @@ public class GameScreen {
 
     public GameScreen(Stage gameStage, GameState.GameCode code, Plant.PlantName[] selectedItems) {
         this(gameStage);
-        //this.gameStage = gameStage;
         items = selectedItems;
         gameCode = code;
         gameState = new GameState(gameCode, selectedItems);
@@ -352,7 +352,6 @@ public class GameScreen {
             mainMenuBtn.setFill(Color.TRANSPARENT);
             pane.getChildren().addAll(mainMenuView, mainMenuBtn);
             mainMenuBtn.setOnMouseClicked(event -> {
-                //pane.getChildren().remove(bgMenuView);
                 new Save(gameHandler);
                 new Menu(gameStage);
             });
@@ -429,13 +428,13 @@ public class GameScreen {
         Random random = new Random();
         Image graveImage ;
         ImageView graveView ;
-        int index;
-        String folderName = "/Screen Images/Grave";
-        for (int i = 0 ; i < GameState.ROW_COUNT ; i++){
+        int index = 0;
+        String folderName = "/Screen Images/graves";
+        for (int i = 0 ; i < GameState.ROW_COUNT ; i++) {
             for (int j = 0 ; j < GameState.COL_COUNT ; j++) {
                 if (gameState.getField()[i][j].getCellContent() == Cell.Content.GRAVE) {
-                    index = random.nextInt(20) + 1;
-                    graveImage = new Image(getClass().getResource( folderName + "/Grave"+ index + ".png").toExternalForm());
+                    index++;
+                    graveImage = new Image(getClass().getResource( folderName + "/Grave" + index + ".png").toExternalForm());
                     graveView = new ImageView(graveImage);
                     int x = GRID_START_X + j * CELL_WIDTH + 20;
                     int y = GRID_START_Y + i * CELL_HEIGHT + 20;

@@ -417,9 +417,11 @@ public class GameHandler {
             for (int j = 0; j < GameState.COL_COUNT; j++) {
                 if (plantHandler.getGraphicPlants()[i][j] != null)
                     plantHandler.getGraphicPlants()[i][j].stop();
-                if (gameState.getField() != null)
+                if (gameState.getField() != null) {
                     if (gameState.getField()[i][j].getPlant() != null)
                         gameState.getField()[i][j].getPlant().clear();
+                    gameState.getField()[i][j].clearTimeline();
+                }
             }
 
         for (GraphicalBullet bullet: graphicalBullets)
@@ -511,7 +513,6 @@ public class GameHandler {
 
 
         gameOver.setCycleCount(1);
-        //gameOver.setDelay(Duration.seconds(1));
         gameOver.play();
     }
 
@@ -616,5 +617,9 @@ public class GameHandler {
 
     public static boolean isGameStopped() {
         return isGameStopped;
+    }
+
+    public ArrayList<GraphicalBullet> getGraphicalBullets() {
+        return graphicalBullets;
     }
 }

@@ -228,7 +228,6 @@ public class ItemSelectionScreen {
                     items[i] = selectedItems.get(i);
                 }
                 GameScreen game = new GameScreen(stage, code, items);
-                //game.start();
             }
         });
     }

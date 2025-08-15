@@ -13,7 +13,8 @@ public class Cell {
     private Plant plant;
     private int row, col;
     private boolean hasFog, lanternEffect, fanEffect;
-    private Timeline removeFog;
+    private Timeline removeFog, counter;
+    private int remainingSeconds;
 
     public Cell(int row, int col) {
         cellContent = Content.BLANK;
@@ -23,6 +24,7 @@ public class Cell {
         hasFog = false;
         lanternEffect = false;
         fanEffect = false;
+        remainingSeconds = 0;
     }
 
     public boolean placePlant(Plant plant) {
@@ -106,6 +108,14 @@ public class Cell {
         this.lanternEffect = lanternEffect;
     }
 
+    public int getRemainingSeconds() {
+        return remainingSeconds;
+    }
+
+    public void setRemainingSeconds(int remainingSeconds) {
+        this.remainingSeconds = remainingSeconds;
+    }
+
     public void unblock() {
         Timeline unblock = new Timeline(new KeyFrame(Duration.seconds(10), e -> {
             cellContent = Content.BLANK;
@@ -118,12 +128,36 @@ public class Cell {
         if (removeFog != null && removeFog.getStatus() == Animation.Status.RUNNING) {
             removeFog.stop();
             removeFog = null;
+            remainingSeconds = 20;
         }
-        removeFog = new Timeline(new KeyFrame(Duration.seconds(20), e -> {
+        else if (remainingSeconds == 0)
+            remainingSeconds = 20;
+
+        removeFog = new Timeline(new KeyFrame(Duration.seconds(remainingSeconds), e -> {
             setFanEffect(false);
         }));
         removeFog.setCycleCount(1);
         removeFog.play();
+
+        if (counter != null && counter.getStatus() == Animation.Status.RUNNING) {
+            counter.stop();
+            counter = null;
+            remainingSeconds = 20;
+        }
+        else if (remainingSeconds == 0)
+            remainingSeconds = 20;
+        counter = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            remainingSeconds --;
+        }));
+        counter.setCycleCount(remainingSeconds);
+        counter.play();
+    }
+
+    public void clearTimeline() {
+        if (removeFog != null)
+            removeFog.stop();
+        if (counter != null)
+            counter.stop();
     }
 
 }

@@ -69,11 +69,19 @@ public class Load {
                     cell.setHasFog(input.readBoolean());
                     cell.setLanternEffect(input.readBoolean());
                     cell.setFanEffect(input.readBoolean());
+                    int remainingSecondsForFog = input.readInt();
+                    if (remainingSecondsForFog != 0) {
+                        cell.setRemainingSeconds(remainingSecondsForFog);
+                        cell.removeFogByFan();
+                    }
 
                     String plantName = input.readUTF();
                     if (!plantName.equals("NULL")) {
                         Plant plant = gameState.itemToPlant(Plant.PlantName.valueOf(plantName), i, j);
                         plant.setHp(input.readInt());
+                        if (plant instanceof Shroom)
+                            ((Shroom) plant).setSleeping(input.readBoolean());
+
                         if (plant instanceof BombPlant || plant instanceof Sunflower
                             || plant instanceof Lantern || plant instanceof Fan)
                             plant.act();
@@ -138,6 +146,19 @@ public class Load {
                 suns.add(sun);
             }
 
+            int bulletCount = input.readInt();
+            for (int i = 0; i < bulletCount; i++) {
+                String type = input.readUTF();
+                int sourceRow = input.readInt();
+                int sourceCol = input.readInt();
+                Bullet bullet = new Bullet(Bullet.BulletType.valueOf(type), sourceRow, sourceCol);
+                double x = input.readDouble();
+                double y = input.readDouble();
+                bullet.setCenterX(x);
+                bullet.setCenterY(y);
+                gameState.getBulletList().add(bullet);
+            }
+
         } catch (Exception e) {
 
         }
@@ -170,6 +191,14 @@ public class Load {
         for (Sun sun: suns) {
             gameHandler.handleSun(sun);
         }
+
+        for (Bullet bullet: gameState.getBulletList()) {
+            GraphicalBullet graphicalBullet = new GraphicalBullet(bullet);
+            gameHandler.getGraphicalBullets().add(graphicalBullet);
+            pane.getChildren().add(graphicalBullet.getBulletImage());
+        }
+
+        gameHandler.updateFogImages();
     }
 
     public boolean isEmpty() {
@@ -184,7 +213,6 @@ public class Load {
         try {
             FileOutputStream outFile = new FileOutputStream(fileName);
             DataOutputStream output = new DataOutputStream(outFile);
-            //output.writeUTF("");
         }
         catch (Exception e) {
 
