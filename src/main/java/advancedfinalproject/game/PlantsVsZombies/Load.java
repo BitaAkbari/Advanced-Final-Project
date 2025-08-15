@@ -58,7 +58,7 @@ public class Load {
             time = input.readInt();
             gameState.setSeconds(time);
 
-            gameHandler = new GameHandler(pane, gameState, stage);
+            gameHandler = new GameHandler(pane, gameState, stage, time);
 
             Cell[][] field = new Cell[GameState.ROW_COUNT][GameState.COL_COUNT];
             for (int i = 0; i < GameState.ROW_COUNT; i++) {
@@ -185,7 +185,7 @@ public class Load {
                 graphicalZombie.getZombieImage().setScaleX(-1);
             gameHandler.getZombieHandler().getGraphicalZombies().add(graphicalZombie);
             pane.getChildren().add(graphicalZombie.getZombieImage());
-            pane.getChildren().add(graphicalZombie.getDot());/////////////////
+//            pane.getChildren().add(graphicalZombie.getDot());/////////////////
         }
 
         for (Sun sun: suns) {

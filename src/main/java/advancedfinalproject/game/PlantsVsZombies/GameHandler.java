@@ -31,7 +31,7 @@ public class GameHandler {
 
 
 
-    public GameHandler(Pane pane, GameState state, Stage stage) {
+    public GameHandler(Pane pane, GameState state, Stage stage, int time) {
         this.stage = stage;
         this.pane = pane;
         gameState = state;
@@ -105,7 +105,8 @@ public class GameHandler {
             }
         }));
         checkWin.setCycleCount(Timeline.INDEFINITE);
-        checkWin.setDelay(Duration.seconds(120));
+        if (time <= 120)
+            checkWin.setDelay(Duration.seconds(120 - time));
         checkWin.play();
 
     }
@@ -383,7 +384,7 @@ public class GameHandler {
             if (gz.getZombie().getHp() <= 0) {
                 deadZombies.add(gz);
                 gameState.getZombieList().remove(gz.getZombie());
-                pane.getChildren().removeAll(gz.getZombieImage(), gz.getDot());
+//                pane.getChildren().removeAll(gz.getZombieImage(), gz.getDot());//////////
             }
         zombieHandler.getGraphicalZombies().removeAll(deadZombies);
     }
@@ -547,12 +548,12 @@ public class GameHandler {
             for (int j = 0; j < GameState.COL_COUNT + 1; j++)
                 fogImages[i][j] = null;
 
-        String address = "/Screen Images/fog/";
+        String imageName = "/Screen Images/fog.png";
         for (int i = 0; i < GameState.ROW_COUNT; i++) {
             for (int j = 0; j < GameState.COL_COUNT; j++) {
                 Cell cell = gameState.getField()[i][j];
                 if (cell.getHasFog()) {
-                    Image image = new Image(getClass().getResource(address + (j - 6) + ".png").toExternalForm());
+                    Image image = new Image(getClass().getResource(imageName).toExternalForm());
                     double x = GameScreen.GRID_START_X + j * GameScreen.CELL_WIDTH;
                     double y = GameScreen.GRID_START_Y + i * GameScreen.CELL_HEIGHT;
                     ImageView fogImage = new ImageView(image);
@@ -569,7 +570,7 @@ public class GameHandler {
                 int j = GameState.COL_COUNT;
                 double x = GameScreen.GRID_START_X + j * GameScreen.CELL_WIDTH;
                 double y = GameScreen.GRID_START_Y + i * GameScreen.CELL_HEIGHT;
-                Image image = new Image(getClass().getResource(address + (j - 6) + ".png").toExternalForm());
+                Image image = new Image(getClass().getResource(imageName).toExternalForm());
                 ImageView fogImage = new ImageView(image);
                 fogImage.setFitWidth(GameScreen.CELL_WIDTH);
                 fogImage.setFitHeight(GameScreen.CELL_HEIGHT);

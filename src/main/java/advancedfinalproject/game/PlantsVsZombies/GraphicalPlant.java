@@ -127,6 +127,10 @@ public class GraphicalPlant {
                 frameCount = 1;
                 folderName += "night plants/";
                 imageName = "hypno shroom.png";
+                plantWidth -= 30;
+                plantHeight -= 25;
+                x += 15;
+                y += 20;
                 isAnimation = false;
                 break;
             case PUFF_SHROOM:
@@ -154,17 +158,29 @@ public class GraphicalPlant {
                 folderName += "night plants/";
                 imageName = "doom shroom.png";
                 isAnimation = false;
+                plantWidth -= 15;
+                plantHeight -= 15;
+                x += 8;
+                y += 15;
                 break;
             case ICE_SHROOM:
                 frameCount = 1;
                 folderName += "night plants/";
                 imageName = "ice shroom.png";
                 isAnimation = false;
+                plantWidth -= 10;
+                plantHeight -= 10;
+                x += 5;
+                y += 15;
                 break;
             case LANTERN:
                 frameCount = 1;
                 folderName += "night plants/";
                 imageName = "lantern.png";
+                plantWidth -= 20;
+                plantHeight -= 20;
+                x += 10;
+                y += 20;
                 isAnimation = false;
                 break;
             case FAN:

@@ -108,7 +108,7 @@ public class GameScreen {
         gameCode = code;
         gameState = new GameState(gameCode, selectedItems);
         bulidScreen();
-        gameHandler = new GameHandler(pane, gameState, gameStage);
+        gameHandler = new GameHandler(pane, gameState, gameStage, 0);
         gameHandler.getZombieHandler().sendZombie();
         start();
 

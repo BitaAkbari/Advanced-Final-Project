@@ -17,7 +17,7 @@ public class GraphicalZombie {
     private ImageView zombieImage;
     public static final double ZOMBIE_WIDTH = 90, ZOMBIE_HEIGHT = 120;
     private double zombieX, zombieY;
-    private Circle dot;/////////////
+//    private Circle dot;/////////////
     private Timeline timeline;
     private int delay;
 
@@ -65,8 +65,8 @@ public class GraphicalZombie {
         zombieImage.setLayoutY(zombieY);
         zombieImage.setMouseTransparent(true);
 
-        dot = new Circle(zombie.getCenterX(), zombie.getCenterY(), 5);//////////////////////
-        dot.setFill(Color.RED);///////////////
+//        dot = new Circle(zombie.getCenterX(), zombie.getCenterY(), 5);//////////////////////
+//        dot.setFill(Color.RED);///////////////
 
         frameNo = 0;
         timeline = new Timeline(new KeyFrame(Duration.millis(delay), e -> {
@@ -78,7 +78,7 @@ public class GraphicalZombie {
                 zombie.setHp(0);
             zombie.setCenterX(xToCenterX());
             zombieImage.setLayoutX(zombieX);
-            dot.setCenterX(zombie.getCenterX());/////////////
+//            dot.setCenterX(zombie.getCenterX());/////////////
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -92,9 +92,9 @@ public class GraphicalZombie {
         return zombieImage;
     }
 
-    public Circle getDot() {/// ////////////////////////
-        return dot;
-    }
+//    public Circle getDot() {/// ////////////////////////
+//        return dot;
+//    }
 
     public void stop() {
         timeline.pause();

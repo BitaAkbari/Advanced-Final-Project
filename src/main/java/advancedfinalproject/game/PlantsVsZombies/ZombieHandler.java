@@ -250,7 +250,7 @@ public class ZombieHandler {
                     GraphicalZombie graphicalZombie = new GraphicalZombie(zombie);
                     graphicalZombies.add(graphicalZombie);
                     pane.getChildren().add(graphicalZombie.getZombieImage());
-                    pane.getChildren().add(graphicalZombie.getDot());//////////////////////////
+//                    pane.getChildren().add(graphicalZombie.getDot());//////////////////////////
                 }
     }
 
@@ -262,7 +262,7 @@ public class ZombieHandler {
         GraphicalZombie graphicalZombie = new GraphicalZombie(zombie);
         graphicalZombies.add(graphicalZombie);
         pane.getChildren().add(graphicalZombie.getZombieImage());
-        pane.getChildren().add(graphicalZombie.getDot());//////////////////////
+//        pane.getChildren().add(graphicalZombie.getDot());//////////////////////
         GameHandler.updateFogImages();
     }
 
@@ -333,9 +333,9 @@ public class ZombieHandler {
     public void updateImages() { //baraye inke akse zombie ha hamishe rooye akse giyah biyofte
         for (GraphicalZombie zombie: graphicalZombies) {
             pane.getChildren().remove(zombie.getZombieImage());
-            pane.getChildren().remove(zombie.getDot());//////////////
+//            pane.getChildren().remove(zombie.getDot());//////////////
             pane.getChildren().add(zombie.getZombieImage());
-            pane.getChildren().add(zombie.getDot());/////////////
+//            pane.getChildren().add(zombie.getDot());/////////////
             GameHandler.updateFogImages();
         }
     }
